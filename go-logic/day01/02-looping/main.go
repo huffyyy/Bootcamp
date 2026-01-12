@@ -46,6 +46,19 @@ func triangle05(n int) {
 	}
 }
 
+func triangleX(n int) {
+    for i := 1; i <= n; i++ {
+        for j := 1; j <= n; j++ {
+            if i == j || i + j == n + 1 {
+                fmt.Print(i)
+            } else {
+                fmt.Print(" ") 
+            }
+        }
+        fmt.Println()
+    }
+}
+
 func triangle06(n int) {
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -128,6 +141,24 @@ func counOk(n int) int {
 	return count
 }
 
+func sumOkContinue(n int) int {
+	sum := 0
+
+	for i := 1; i <= n; i++ {
+		if i % 3 == 0 && i % 4 == 0  {
+			break
+		} else if i % 3 == 0 {
+			sum += i
+		} else if i % 4 == 0 {
+			continue
+		} else {
+			continue
+		}
+	}
+	return sum
+}
+
+
 func main() {
 	n := 5
 	boxStar(n)
@@ -136,6 +167,7 @@ func main() {
 	triangle02(n)
 	triangle05(n)
 	triangle06(n)
+	triangleX(n)
 
 	countDigit := countDigits(3452233)
 	fmt.Println("countdigit : ", countDigit)
@@ -149,4 +181,12 @@ func main() {
 	fmt.Println("SumOk : ", sumOk(15))
 	fmt.Println("CountOk : ", counOk(15))
 
+	fmt.Println("SumOkContinue : ", sumOkContinue(25))
+	
+	counter := 0
+	target :
+	fmt.Println("Counter : ", counter)
+	if counter < 5 {
+		goto target
+	}
 }
