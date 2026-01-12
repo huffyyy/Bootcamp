@@ -184,6 +184,17 @@ func sumOkContinue(n int) int {
 		return vocal, consonant
 	}
 
+	func fibonacci(n int) {
+	first := 1
+	second := 1
+
+	for i := 1; i <= n; i++ {
+		fmt.Printf("%d", first)
+	first, second = second, first + second
+	}
+	fmt.Println()
+	}
+
 
 func main() {
 	n := 5
@@ -281,4 +292,7 @@ var (
 	fmt.Println("arab : ", arab)
 	fmt.Println("hexa : ", hexa)
 	fmt.Println("unicode : ", unicode)
+
+	fmt.Print("Deret Fibonacci: ")
+    fibonacci(10)
 }
