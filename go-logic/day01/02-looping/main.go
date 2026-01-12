@@ -92,6 +92,42 @@ func countDigits(n int) int {
 	return counter
 }
 
+func okYes(n int) {
+	for i := 1; i < n; i++ {
+		if i % 3 == 0 && i % 4 == 0 {
+			fmt.Println("OkYes")
+		} else if i % 3 == 0 {
+			fmt.Println("Ok")
+		} else if i % 4 == 0 {
+			fmt.Println("Yes")
+		} else {
+			fmt.Println(i)
+		}
+	}
+}
+
+func sumOk(n int) int  {
+	sum := 0
+
+	for i := 1; i <= n; i++ {
+		if i % 3 == 0 && i % 4 != 0 {
+			sum+=i
+		}
+	}
+	return sum
+}
+
+func counOk(n int) int {
+	count := 0
+
+	for i := 1; i <= n; i++ {
+		if i % 3 == 0 && i % 4 != 0 {
+			count++
+		}
+	}
+	return count
+}
+
 func main() {
 	n := 5
 	boxStar(n)
@@ -108,5 +144,9 @@ func main() {
 
 	fmt.Println("is prime : ", isPrime(5))
 	fmt.Println("is prime : ", isPrime(6))
+
+	okYes(15)
+	fmt.Println("SumOk : ", sumOk(15))
+	fmt.Println("CountOk : ", counOk(15))
 
 }
