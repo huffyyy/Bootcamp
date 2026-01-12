@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func boxHollow (n int) {
 	for i := 0; i < n; i++ { // outer loop u/pindah baris
@@ -158,6 +160,30 @@ func sumOkContinue(n int) int {
 	return sum
 }
 
+	func countVowel1(word string) (int, int) {
+		vocal, consonant := 0, 0
+		for i := 0; i < len(word); i++ {
+			if word[i] == 'a' || word[i] == 'i'|| word[i] == 'u' || word[i] =='e' || word[i] == 'o' {
+				vocal++
+			} else if word[i] != ' ' {
+				consonant++
+			}
+		}
+		return vocal, consonant
+	}
+
+	func countVowel2(word string) (int, int) {
+		vocal, consonant := 0, 0		
+		for _, v := range word {
+			if v == 'a' || v == 'i' || v == 'u' || v == 'e' || v == 'o'  {
+				vocal++
+			} else if v != ' ' {
+				consonant++
+			}
+		}
+		return vocal, consonant
+	}
+
 
 func main() {
 	n := 5
@@ -183,6 +209,7 @@ func main() {
 
 	fmt.Println("SumOkContinue : ", sumOkContinue(25))
 
+	// goto statement // label statement
 	counter := 0
 	target: 
 		counter++
@@ -191,4 +218,67 @@ func main() {
 			goto target 
 		}
 		fmt.Println("Selesai!")
+	
+	intro := "Hello coding bootcamp codeid"
+	fmt.Println(intro)
+	
+	vocal, consonant := countVowel1(intro)
+	fmt.Println("Vocal : ", vocal)
+	fmt.Println("Consonant : ", consonant)
+
+	vocal, consonant = countVowel2(intro)
+	fmt.Println("Vocal : ", vocal)
+	fmt.Println("Consonant : ", consonant)
+
+	// multilateral string
+	str1 := `
+			bootcamp codeid
+			golang batch#30
+	`
+	fmt.Println(str1)
+
+	str2 := "Folder in \"c:\\bootcamp\\go\\\""
+	fmt.Println(str2)
+
+	// string to byte
+	username := "tanjiro"
+	for i := 0; i < len(username); i++ {
+		fmt.Println(username[i] ," ")
+	}
+
+	// byte to string
+	for i := 0; i < len(username); i++ {
+		fmt.Println(string(username[i]), " ")
+	}
+
+	// using range 
+	for i, v := range username {
+		fmt.Printf("%d:%v ", i, string(v))
+	}
+
+	// username to rune
+	runeUsername := []rune(username)
+	for i := 0; i < len(username); i++ {
+		fmt.Printf("%d", runeUsername[i])
+	}
+
+	// rune literals
+var (
+		tab       = '\t'
+		newline   = '\n'
+		backspace = '\b'
+		hagul     = '가'  
+		arab      = 'ع'    
+		hexa      = '\xFF' 
+		unicode   = '\u0369' 
+	)
+
+	fmt.Println("=== Output Angka (Rune ID) ===")
+	fmt.Println("tab : ", tab)
+	fmt.Println("newline : ", newline)
+	fmt.Println("backspace : ", backspace)
+	fmt.Println("hagul : ", hagul)
+	fmt.Println("arab : ", arab)
+	fmt.Println("hexa : ", hexa)
+	fmt.Println("unicode : ", unicode)
 }
