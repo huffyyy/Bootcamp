@@ -182,11 +182,13 @@ func main() {
 	fmt.Println("CountOk : ", counOk(15))
 
 	fmt.Println("SumOkContinue : ", sumOkContinue(25))
-	
+
 	counter := 0
-	target :
-	fmt.Println("Counter : ", counter)
-	if counter < 5 {
-		goto target
-	}
+	target: 
+		counter++
+		fmt.Println("Counter : ", counter)
+		if counter < 5 {
+			goto target 
+		}
+		fmt.Println("Selesai!")
 }
