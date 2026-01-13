@@ -75,5 +75,21 @@ func main() {
 	fmt.Println(angka[0])
 	fmt.Println(angka[99])
 	fmt.Println(angka[67])
+
+	// intial arrays with zero value
+	var emptyFruits [5]string
+	fmt.Println("Empty array : ", emptyFruits)
+
+	// intial arrays with value 
+	fruits := [5]string{"apel", "jeruk", "tomat", "durian", "mangga"}
+	fmt.Println("Index\tValue\tLength")
 	
+	for i := 0; i < len(fruits); i++ {
+		value := fruits[i]
+		length := len(value)
+		
+		fmt.Printf("%d\t%s\t%d\n", i, value, length)
+	}
+
+	fmt.Printf("\nMemory adress arrays: %p\n", &fruits)
 }
