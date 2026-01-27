@@ -23,6 +23,15 @@ func NewEmployee(firstName string, lastName string, hireDate time.Time, salary f
 	}
 }
 
+// 2. constructor return value employee
+func NewEmployeeValue(firstName string, lastName string, hireDate time.Time, salary float64) Employee  {
+	return Employee{
+		firstName: firstName,
+		lastName: lastName,
+		hireDate: hireDate,
+		salary: salary,
+	}
+}
 func (e *Employee) GetId() int64 {
 	if e != nil {
 		return e.id
