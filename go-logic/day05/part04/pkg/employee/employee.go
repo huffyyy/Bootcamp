@@ -1,6 +1,19 @@
 package employee
 
-import "time"
+import (
+	"strings"
+	"sync/atomic"
+	"time"
+)
+
+var lastID atomic.Int64
+func init()  {
+	lastID.Store(100)
+}
+
+func GenerateID() int64  {
+	return lastID.Add(1)
+}
 
 // 1. jadikan employee public
 type Employee struct {
@@ -16,22 +29,50 @@ type Employee struct {
 // encapsulation method
 func NewEmployee(firstName string, lastName string, hireDate time.Time, salary float64) *Employee  {
 	return &Employee{
-		firstName: firstName,
-		lastName: lastName,
-		hireDate: hireDate,
-		salary: salary,
+		id: 		GenerateID(),
+		firstName: 	firstName,
+		lastName: 	lastName,
+		hireDate: 	hireDate,
+		salary: 	salary,
 	}
 }
 
 // 2. constructor return value employee
 func NewEmployeeValue(firstName string, lastName string, hireDate time.Time, salary float64) Employee  {
 	return Employee{
-		firstName: firstName,
-		lastName: lastName,
-		hireDate: hireDate,
-		salary: salary,
+		id: 		GenerateID(),
+		firstName: 	firstName,
+		lastName: 	lastName,
+		hireDate: 	hireDate,
+		salary: 	salary,
 	}
 }
+
+func NewEmployeeValid(firstName string, lastName string, hireDate time.Time, salary float64) (*Employee, error)  {
+	
+	/* if salary < minimunWage {
+		return nil, ErrInvalidSalaryMin
+	} else if salary > maximumWage {
+		return nil, ErrInvalidSalaryMax
+	}
+
+	if strings.TrimSpace(firstName) == "" {
+		return nil, ErrEmptyFirstName
+	} */
+
+	if err := validateEmployee(firstName, lastName, hireDate, salary); err != nil {
+		return nil, err
+	}
+	
+	return &Employee{
+		id: 		GenerateID(),	
+		firstName: 	firstName,
+		lastName: 	lastName,
+		hireDate: 	hireDate,
+		salary: 	salary,
+	}, nil
+}
+
 func (e *Employee) GetId() int64 {
 	if e != nil {
 		return e.id
@@ -100,6 +141,27 @@ func (e *Employee) SetSalary(salary float64) error {
 			return ErrInvalidSalaryMax
 		}
 		e.salary = salary
+	}
+	return nil
+}
+
+func validateEmployee(firstName, lastName string, hireDate time.Time, salary float64) error  {
+	if strings.TrimSpace(firstName) == "" {
+		return ErrEmptyFirstName
+	}
+
+	if strings.TrimSpace(lastName) == "" {
+		return ErrEmptyLastName
+	}
+
+	if salary < minimunWage {
+		return ErrInvalidSalaryMin
+	} else if salary > maximumWage {
+		return ErrInvalidSalaryMax
+	}
+
+	if hireDate.After(time.Now()) {
+		return ErrFutureHireDate
 	}
 	return nil
 }

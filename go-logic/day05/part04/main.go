@@ -40,5 +40,12 @@ func main() {
 	emp5.SetLastName("Windah")
 	
 	fmt.Println("emp4 after : ", emp4)
-	
+
+	// 3. constructor return employee pointer and error
+	emp6, err := employee.NewEmployeeValid("Naila", "Salsabila", time.Date(2026, time.January, 21, 0, 0, 0, 0, time.UTC), 500_000)
+	if err != nil {
+		fmt.Println("Failed to create object employee : ", err)
+	}
+
+	fmt.Println(emp6)
 }
