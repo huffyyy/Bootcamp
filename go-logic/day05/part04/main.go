@@ -14,5 +14,12 @@ func main() {
 	fmt.Println(emp1)
 	fmt.Println(emp2)
 
+	emp3 := emp1
+	
+	if err := emp3.SetSalary(200_000); err != nil {
+		fmt.Println("failed to update salary : ", err)
+	}
+
+	fmt.Println("emp1 after : ", emp1)
 
 }
