@@ -1,0 +1,10 @@
+-- CTE multiple
+WITH c_regions as (
+	SELECT r.region_id, region_name, c.country_id, country_name, location_id, street_address, city
+	FROM hr.regions as r
+	JOIN hr.countries as c ON r.region_id = c.region_id
+	JOIN hr.locations as l ON c.country_id = l.country_id
+),
+c_depart as (SELECT * FROM hr.departments)
+SELECT * FROM c_regions as cr
+JOIN c_depart as cd ON cd.location_id = cr.location_id
