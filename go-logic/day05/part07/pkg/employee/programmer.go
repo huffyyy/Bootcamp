@@ -3,6 +3,8 @@ package employee
 import (
 	"fmt"
 	"time"
+
+	"codeid.day05.part07/pkg/departement"
 )
 
 type Programmer struct {
@@ -10,9 +12,9 @@ type Programmer struct {
 	placement string
 }
 
-func NewProgrammer(firstName string, lastName string, hireDate time.Time, salary float64, placement string) *Programmer {
+func NewProgrammer(firstName string, lastName string, hireDate time.Time, salary float64, departement *departement.Departement, placement string) *Programmer {
 	return &Programmer{
-		Employee: *NewEmployee(firstName, lastName, hireDate, salary),
+		Employee: *NewEmployeeWithDept(firstName, lastName, hireDate, salary, departement),
 		placement: placement,
 	}
 }
@@ -35,6 +37,6 @@ func (p *Programmer) ToString() string {
 			p.id ,p.firstName, p.lastName, p.hireDate.Format("2026-01-26"), p.salary, p.placement )
 }
 
-func (p *Programmer) ToJson() string  {
+func (p *Programmer) ToJson() (string, error)  {
 	panic("not implemented")
 }

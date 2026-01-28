@@ -3,6 +3,8 @@ package employee
 import (
 	"fmt"
 	"time"
+
+	"codeid.day05.part07/pkg/departement"
 )
 
 type Manager struct {
@@ -10,9 +12,9 @@ type Manager struct {
 	totalStaff int64
 }
 
-func NewManager(firstName string, lastName string, hireDate time.Time, salary float64, totalStaff int64) *Manager {
+func NewManager(firstName string, lastName string, hireDate time.Time, salary float64, departement *departement.Departement, totalStaff int64) *Manager {
 	return &Manager{
-		Employee: *NewEmployee(firstName, lastName, hireDate, salary),
+		Employee: *NewEmployeeWithDept(firstName, lastName, hireDate, salary, departement),
 		totalStaff: totalStaff,
 	}
 }
@@ -35,6 +37,6 @@ func (m *Manager) ToString() string  {
 			m.id ,m.firstName, m.lastName, m.hireDate.Format("2026-01-26"), m.salary, m.totalStaff )
 }
 
-func (m *Manager) ToJson() string  {
+func (m *Manager) ToJson() (string, error)  {
 	panic("not implemented")
 }

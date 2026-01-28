@@ -189,7 +189,7 @@ func (e *Employee) ToString() string {
 
 }
 
-func (e *Employee) ToJson() string {
+func (e *Employee) ToJson() (string, error) {
 	panic("not implemented")
 
 }
