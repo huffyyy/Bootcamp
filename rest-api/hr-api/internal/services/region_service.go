@@ -14,6 +14,8 @@ type RegionService interface {
 	CreateRegion(ctx context.Context, region *models.Region) error
 	UpdateRegion(ctx context.Context, region *models.Region) error
 	DeleteRegion(ctx context.Context, id uint) error
+	GetAllRegionsWithCountry(ctx context.Context) ([]models.Region, error)
+	GetRegionByIDWithCountry(ctx context.Context, id uint) (*models.Region, error)
 }
 
 type regionService struct {
@@ -26,6 +28,19 @@ func NewRegionService(regionRepo repositories.RegionRepository) RegionService {
 	}
 }
 
+// GetRegionByIDWithCountry implements [RegionService].
+func (s *regionService) GetRegionByIDWithCountry(ctx context.Context, id uint) (*models.Region, error) {
+	if id == 0 {
+		return nil, errors.New("region ID cannot be empty")
+	}
+	return s.regionRepo.FindByIDWithCountry(ctx, id)
+}
+
+// GetAllRegionsWithCountry implements [RegionService].
+func (s *regionService) GetAllRegionsWithCountry(ctx context.Context) ([]models.Region, error) {
+	return s.regionRepo.FindAllWithCountry(ctx)
+}
+
 func (s *regionService) GetAllRegions(ctx context.Context) ([]models.Region, error) {
 	return s.regionRepo.FindAll(ctx)
 }
@@ -34,7 +49,7 @@ func (s *regionService) GetRegionByID(ctx context.Context, id uint) (*models.Reg
 	if id == 0 {
 		return nil, errors.New("region ID cannot be empty")
 	}
-	return s.regionRepo.FindById(ctx, id)
+	return s.regionRepo.FindByID(ctx, id)
 }
 
 func (s *regionService) CreateRegion(ctx context.Context, region *models.Region) error {

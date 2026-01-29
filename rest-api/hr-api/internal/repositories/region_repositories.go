@@ -9,14 +9,40 @@ import (
 
 type RegionRepository interface {
 	FindAll(ctx context.Context) ([]models.Region, error)
-	FindById(ctx context.Context, id uint) (*models.Region, error)
+	FindByID(ctx context.Context, id uint) (*models.Region, error)
 	Create(ctx context.Context, region *models.Region) error
 	Update(ctx context.Context, region *models.Region) error
 	Delete(ctx context.Context, id uint) error
+	FindAllWithCountry(ctx context.Context) ([]models.Region, error)
+	FindByIDWithCountry(ctx context.Context, id uint) (*models.Region, error)
 }
 
 type regionRepository struct {
 	DB *gorm.DB
+}
+
+// func NewRegionRepo implements RegionRepositoryInteface
+
+func NewRegionRepository(dB *gorm.DB) RegionRepository {
+	return &regionRepository{
+		DB: dB,
+	}
+}
+
+// FindByIDWithCountry implements [RegionRepository].
+func (r *regionRepository) FindByIDWithCountry(ctx context.Context, id uint) (*models.Region, error) {
+	//1. using value slice
+	var regions *models.Region
+	err := r.DB.WithContext(ctx).Preload("Countries").Find(&regions, "region_id = ?", id).Error
+	return regions, err
+}
+
+// FindAllWithCountry implements [RegionRepository].
+func (r *regionRepository) FindAllWithCountry(ctx context.Context) ([]models.Region, error) {
+	//1. using value slice
+	var regions []models.Region
+	err := r.DB.WithContext(ctx).Preload("Countries").Find(&regions).Error
+	return regions, err
 }
 
 // Create implements [RegionRepository].
@@ -34,25 +60,20 @@ func (r *regionRepository) FindAll(ctx context.Context) ([]models.Region, error)
 	var regions []models.Region
 	err := r.DB.WithContext(ctx).Find(&regions).Error
 	return regions, err
+
 }
 
-// FindById implements [RegionRepository].
-func (r *regionRepository) FindById(ctx context.Context, id uint) (*models.Region, error) {
+// FindByID implements [RegionRepository].
+func (r *regionRepository) FindByID(ctx context.Context, id uint) (*models.Region, error) {
 	var region models.Region
-	err := r.DB.WithContext(ctx).Find(&region, id).Error
+	err := r.DB.WithContext(ctx).First(&region, id).Error
 	if err != nil {
 		return nil, err
 	}
-	return &region, err
+	return &region, nil
 }
 
 // Update implements [RegionRepository].
 func (r *regionRepository) Update(ctx context.Context, region *models.Region) error {
 	return r.DB.WithContext(ctx).Save(region).Error
-}
-
-func NewRegionRepository(dB *gorm.DB) RegionRepository {
-	return &regionRepository{
-		DB: dB,
-	}
 }

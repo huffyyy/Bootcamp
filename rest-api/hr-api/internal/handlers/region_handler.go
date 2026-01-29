@@ -153,3 +153,49 @@ func (h *RegionHandler) DeleteRegion(c *gin.Context) {
 		"message": "Region deleted successfully",
 	})
 }
+
+func (h *RegionHandler) GetRegionByIdWithCountry(c *gin.Context) {
+	// get id param from endpoint router yg bertipe string
+	//stcconv.ParUint : konvert string ke uint
+	//parseUint(idstr,10,32) -> 10 base ten number,32 tipe bit
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   true,
+			"message": "Invalid region ID",
+		})
+		return
+	}
+
+	region, err := h.regionService.GetRegionByIDWithCountry(c.Request.Context(), uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   true,
+			"message": "Region not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    region,
+	})
+}
+
+func (h *RegionHandler) GetRegionsWithCountry(c *gin.Context) {
+	regions, err := h.regionService.GetAllRegionsWithCountry(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   true,
+			"message": "Failed to fetch regions",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    regions,
+	})
+}
