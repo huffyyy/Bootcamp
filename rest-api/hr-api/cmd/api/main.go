@@ -4,19 +4,48 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/codeid/hr-api/internal/handlers"
+	"github.com/codeid/hr-api/internal/repositories"
+	"github.com/codeid/hr-api/internal/services"
 	"github.com/codeid/hr-api/pkg/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// 1. set datasourcename db config
-	_, err := database.SetupDB()
+	db, err := database.SetupDB()
 	if err != nil {
 		log.Fatal("failed to connect db %w", err)
 	}
 
+	// 1.1 initautomigrate --> baru
+	database.InitAutoMigrate(db)
+
+	// init repositories
+	regionRepo := repositories.NewRegionRepository(db)
+
+	// init service 
+	regionService := services.NewRegionService(regionRepo)
+
+	// init handler
+	regionHandler := handlers.NewRegionHandler(regionService)
+
 	// 3. setup router
 	router := gin.Default()
+
+	// 4. create router endpoint
+	api := router.Group("/api")
+	{
+		// create region route
+		regions := api.Group("/regions")
+		{
+			regions.GET("/", regionHandler.GetRegions)
+			regions.GET("/:id", regionHandler.GetRegion)
+			regions.POST("/", regionHandler.CreateRegion)
+			regions.PUT("/:id", regionHandler.UpdateRegion)
+			regions.DELETE("/:id", regionHandler.DeleteRegion)
+		}
+	}
 
 	// 3.1 call handler
 	router.GET("/", hellowordHandler)

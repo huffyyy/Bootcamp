@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/codeid/hr-api/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -11,7 +12,7 @@ import (
 
 func SetupDB() (*gorm.DB, error)  {
 	// 1. set datasourcename db config
-	dsn := "host=localhost user=postgres password=admin dbname=hr_db_test port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+	dsn := "host=localhost user=postgres password=admin123 dbname=hr_db_test port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 
 	// 2. open connection
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -42,4 +43,13 @@ func SetupDB() (*gorm.DB, error)  {
 
 	// 4. return value *gorm.DB
 	return db, nil
+}
+
+func InitAutoMigrate(db *gorm.DB)  {
+	err := db.AutoMigrate(
+		&models.Region{}, // add model region
+	)
+	if err != nil {
+		log.Fatal("failed to migrate database : ", err)
+	}
 }
