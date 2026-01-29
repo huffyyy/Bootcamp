@@ -9,12 +9,12 @@ import (
 
 type RegionRepository interface {
 	FindAll(ctx context.Context) ([]models.Region, error)
+	FindAllWithCountry(ctx context.Context) ([]models.Region, error)
 	FindByID(ctx context.Context, id uint) (*models.Region, error)
+	FindByIDWithCountry(ctx context.Context, id uint) (*models.Region, error)
 	Create(ctx context.Context, region *models.Region) error
 	Update(ctx context.Context, region *models.Region) error
 	Delete(ctx context.Context, id uint) error
-	FindAllWithCountry(ctx context.Context) ([]models.Region, error)
-	FindByIDWithCountry(ctx context.Context, id uint) (*models.Region, error)
 }
 
 type regionRepository struct {
