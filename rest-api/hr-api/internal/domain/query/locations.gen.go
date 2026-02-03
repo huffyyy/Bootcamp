@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newLocation(db *gorm.DB, opts ...gen.DOOption) location {
 	_location := location{}
 
 	_location.locationDo.UseDB(db, opts...)
-	_location.locationDo.UseModel(&model.Location{})
+	_location.locationDo.UseModel(&models.Location{})
 
 	tableName := _location.locationDo.TableName()
 	_location.ALL = field.NewAsterisk(tableName)
@@ -138,17 +138,17 @@ type ILocationDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) ILocationDo
 	Unscoped() ILocationDo
-	Create(values ...*model.Location) error
-	CreateInBatches(values []*model.Location, batchSize int) error
-	Save(values ...*model.Location) error
-	First() (*model.Location, error)
-	Take() (*model.Location, error)
-	Last() (*model.Location, error)
-	Find() ([]*model.Location, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Location, err error)
-	FindInBatches(result *[]*model.Location, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Location) error
+	CreateInBatches(values []*models.Location, batchSize int) error
+	Save(values ...*models.Location) error
+	First() (*models.Location, error)
+	Take() (*models.Location, error)
+	Last() (*models.Location, error)
+	Find() ([]*models.Location, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Location, err error)
+	FindInBatches(result *[]*models.Location, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Location) (info gen.ResultInfo, err error)
+	Delete(...*models.Location) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -160,9 +160,9 @@ type ILocationDo interface {
 	Assign(attrs ...field.AssignExpr) ILocationDo
 	Joins(fields ...field.RelationField) ILocationDo
 	Preload(fields ...field.RelationField) ILocationDo
-	FirstOrInit() (*model.Location, error)
-	FirstOrCreate() (*model.Location, error)
-	FindByPage(offset int, limit int) (result []*model.Location, count int64, err error)
+	FirstOrInit() (*models.Location, error)
+	FirstOrCreate() (*models.Location, error)
+	FindByPage(offset int, limit int) (result []*models.Location, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -264,57 +264,57 @@ func (l locationDo) Unscoped() ILocationDo {
 	return l.withDO(l.DO.Unscoped())
 }
 
-func (l locationDo) Create(values ...*model.Location) error {
+func (l locationDo) Create(values ...*models.Location) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return l.DO.Create(values)
 }
 
-func (l locationDo) CreateInBatches(values []*model.Location, batchSize int) error {
+func (l locationDo) CreateInBatches(values []*models.Location, batchSize int) error {
 	return l.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (l locationDo) Save(values ...*model.Location) error {
+func (l locationDo) Save(values ...*models.Location) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return l.DO.Save(values)
 }
 
-func (l locationDo) First() (*model.Location, error) {
+func (l locationDo) First() (*models.Location, error) {
 	if result, err := l.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Location), nil
+		return result.(*models.Location), nil
 	}
 }
 
-func (l locationDo) Take() (*model.Location, error) {
+func (l locationDo) Take() (*models.Location, error) {
 	if result, err := l.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Location), nil
+		return result.(*models.Location), nil
 	}
 }
 
-func (l locationDo) Last() (*model.Location, error) {
+func (l locationDo) Last() (*models.Location, error) {
 	if result, err := l.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Location), nil
+		return result.(*models.Location), nil
 	}
 }
 
-func (l locationDo) Find() ([]*model.Location, error) {
+func (l locationDo) Find() ([]*models.Location, error) {
 	result, err := l.DO.Find()
-	return result.([]*model.Location), err
+	return result.([]*models.Location), err
 }
 
-func (l locationDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Location, err error) {
-	buf := make([]*model.Location, 0, batchSize)
+func (l locationDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Location, err error) {
+	buf := make([]*models.Location, 0, batchSize)
 	err = l.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -322,7 +322,7 @@ func (l locationDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) er
 	return results, err
 }
 
-func (l locationDo) FindInBatches(result *[]*model.Location, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (l locationDo) FindInBatches(result *[]*models.Location, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return l.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -348,23 +348,23 @@ func (l locationDo) Preload(fields ...field.RelationField) ILocationDo {
 	return &l
 }
 
-func (l locationDo) FirstOrInit() (*model.Location, error) {
+func (l locationDo) FirstOrInit() (*models.Location, error) {
 	if result, err := l.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Location), nil
+		return result.(*models.Location), nil
 	}
 }
 
-func (l locationDo) FirstOrCreate() (*model.Location, error) {
+func (l locationDo) FirstOrCreate() (*models.Location, error) {
 	if result, err := l.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Location), nil
+		return result.(*models.Location), nil
 	}
 }
 
-func (l locationDo) FindByPage(offset int, limit int) (result []*model.Location, count int64, err error) {
+func (l locationDo) FindByPage(offset int, limit int) (result []*models.Location, count int64, err error) {
 	result, err = l.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -393,7 +393,7 @@ func (l locationDo) Scan(result interface{}) (err error) {
 	return l.DO.Scan(result)
 }
 
-func (l locationDo) Delete(models ...*model.Location) (result gen.ResultInfo, err error) {
+func (l locationDo) Delete(models ...*models.Location) (result gen.ResultInfo, err error) {
 	return l.DO.Delete(models)
 }
 

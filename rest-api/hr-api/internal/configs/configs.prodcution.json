@@ -1,0 +1,17 @@
+{
+  "ENVIRONMENT": "production",
+  "SERVER": {
+    "ADDRESS": ":8080"
+  },
+  "DATABASE": {
+    "HOST": "production-db.example.com",
+    "PORT": "5432",
+    "USER": "prod_user",
+    "PASSWORD": "prod_password",
+    "NAME": "prod_db"
+  },
+  "JWT": {
+    "SECRET": "production-super-secure-key-2024",
+    "EXPIRY_HOURS": 1
+  }
+}

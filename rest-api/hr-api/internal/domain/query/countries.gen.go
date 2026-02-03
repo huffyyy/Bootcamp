@@ -17,20 +17,22 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newCountry(db *gorm.DB, opts ...gen.DOOption) country {
 	_country := country{}
 
 	_country.countryDo.UseDB(db, opts...)
-	_country.countryDo.UseModel(&model.Country{})
+	_country.countryDo.UseModel(&models.Country{})
 
 	tableName := _country.countryDo.TableName()
 	_country.ALL = field.NewAsterisk(tableName)
 	_country.CountryID = field.NewString(tableName, "country_id")
 	_country.CountryName = field.NewString(tableName, "country_name")
-	_country.RegionID = field.NewInt32(tableName, "region_id")
+	_country.RegionID = field.NewInt64(tableName, "region_id")
+	_country.CreatedDate = field.NewTime(tableName, "created_date")
+	_country.ModifiedDate = field.NewTime(tableName, "modified_date")
 
 	_country.fillFieldMap()
 
@@ -40,10 +42,12 @@ func newCountry(db *gorm.DB, opts ...gen.DOOption) country {
 type country struct {
 	countryDo
 
-	ALL         field.Asterisk
-	CountryID   field.String
-	CountryName field.String
-	RegionID    field.Int32
+	ALL          field.Asterisk
+	CountryID    field.String
+	CountryName  field.String
+	RegionID     field.Int64
+	CreatedDate  field.Time
+	ModifiedDate field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -62,7 +66,9 @@ func (c *country) updateTableName(table string) *country {
 	c.ALL = field.NewAsterisk(table)
 	c.CountryID = field.NewString(table, "country_id")
 	c.CountryName = field.NewString(table, "country_name")
-	c.RegionID = field.NewInt32(table, "region_id")
+	c.RegionID = field.NewInt64(table, "region_id")
+	c.CreatedDate = field.NewTime(table, "created_date")
+	c.ModifiedDate = field.NewTime(table, "modified_date")
 
 	c.fillFieldMap()
 
@@ -79,10 +85,12 @@ func (c *country) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *country) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 3)
+	c.fieldMap = make(map[string]field.Expr, 5)
 	c.fieldMap["country_id"] = c.CountryID
 	c.fieldMap["country_name"] = c.CountryName
 	c.fieldMap["region_id"] = c.RegionID
+	c.fieldMap["created_date"] = c.CreatedDate
+	c.fieldMap["modified_date"] = c.ModifiedDate
 }
 
 func (c country) clone(db *gorm.DB) country {
@@ -126,17 +134,17 @@ type ICountryDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) ICountryDo
 	Unscoped() ICountryDo
-	Create(values ...*model.Country) error
-	CreateInBatches(values []*model.Country, batchSize int) error
-	Save(values ...*model.Country) error
-	First() (*model.Country, error)
-	Take() (*model.Country, error)
-	Last() (*model.Country, error)
-	Find() ([]*model.Country, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Country, err error)
-	FindInBatches(result *[]*model.Country, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Country) error
+	CreateInBatches(values []*models.Country, batchSize int) error
+	Save(values ...*models.Country) error
+	First() (*models.Country, error)
+	Take() (*models.Country, error)
+	Last() (*models.Country, error)
+	Find() ([]*models.Country, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Country, err error)
+	FindInBatches(result *[]*models.Country, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Country) (info gen.ResultInfo, err error)
+	Delete(...*models.Country) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -148,9 +156,9 @@ type ICountryDo interface {
 	Assign(attrs ...field.AssignExpr) ICountryDo
 	Joins(fields ...field.RelationField) ICountryDo
 	Preload(fields ...field.RelationField) ICountryDo
-	FirstOrInit() (*model.Country, error)
-	FirstOrCreate() (*model.Country, error)
-	FindByPage(offset int, limit int) (result []*model.Country, count int64, err error)
+	FirstOrInit() (*models.Country, error)
+	FirstOrCreate() (*models.Country, error)
+	FindByPage(offset int, limit int) (result []*models.Country, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -252,57 +260,57 @@ func (c countryDo) Unscoped() ICountryDo {
 	return c.withDO(c.DO.Unscoped())
 }
 
-func (c countryDo) Create(values ...*model.Country) error {
+func (c countryDo) Create(values ...*models.Country) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return c.DO.Create(values)
 }
 
-func (c countryDo) CreateInBatches(values []*model.Country, batchSize int) error {
+func (c countryDo) CreateInBatches(values []*models.Country, batchSize int) error {
 	return c.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (c countryDo) Save(values ...*model.Country) error {
+func (c countryDo) Save(values ...*models.Country) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return c.DO.Save(values)
 }
 
-func (c countryDo) First() (*model.Country, error) {
+func (c countryDo) First() (*models.Country, error) {
 	if result, err := c.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Country), nil
+		return result.(*models.Country), nil
 	}
 }
 
-func (c countryDo) Take() (*model.Country, error) {
+func (c countryDo) Take() (*models.Country, error) {
 	if result, err := c.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Country), nil
+		return result.(*models.Country), nil
 	}
 }
 
-func (c countryDo) Last() (*model.Country, error) {
+func (c countryDo) Last() (*models.Country, error) {
 	if result, err := c.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Country), nil
+		return result.(*models.Country), nil
 	}
 }
 
-func (c countryDo) Find() ([]*model.Country, error) {
+func (c countryDo) Find() ([]*models.Country, error) {
 	result, err := c.DO.Find()
-	return result.([]*model.Country), err
+	return result.([]*models.Country), err
 }
 
-func (c countryDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Country, err error) {
-	buf := make([]*model.Country, 0, batchSize)
+func (c countryDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Country, err error) {
+	buf := make([]*models.Country, 0, batchSize)
 	err = c.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -310,7 +318,7 @@ func (c countryDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) err
 	return results, err
 }
 
-func (c countryDo) FindInBatches(result *[]*model.Country, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (c countryDo) FindInBatches(result *[]*models.Country, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return c.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -336,23 +344,23 @@ func (c countryDo) Preload(fields ...field.RelationField) ICountryDo {
 	return &c
 }
 
-func (c countryDo) FirstOrInit() (*model.Country, error) {
+func (c countryDo) FirstOrInit() (*models.Country, error) {
 	if result, err := c.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Country), nil
+		return result.(*models.Country), nil
 	}
 }
 
-func (c countryDo) FirstOrCreate() (*model.Country, error) {
+func (c countryDo) FirstOrCreate() (*models.Country, error) {
 	if result, err := c.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Country), nil
+		return result.(*models.Country), nil
 	}
 }
 
-func (c countryDo) FindByPage(offset int, limit int) (result []*model.Country, count int64, err error) {
+func (c countryDo) FindByPage(offset int, limit int) (result []*models.Country, count int64, err error) {
 	result, err = c.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -381,7 +389,7 @@ func (c countryDo) Scan(result interface{}) (err error) {
 	return c.DO.Scan(result)
 }
 
-func (c countryDo) Delete(models ...*model.Country) (result gen.ResultInfo, err error) {
+func (c countryDo) Delete(models ...*models.Country) (result gen.ResultInfo, err error) {
 	return c.DO.Delete(models)
 }
 

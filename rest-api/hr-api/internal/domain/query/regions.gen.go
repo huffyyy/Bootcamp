@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newRegion(db *gorm.DB, opts ...gen.DOOption) region {
 	_region := region{}
 
 	_region.regionDo.UseDB(db, opts...)
-	_region.regionDo.UseModel(&model.Region{})
+	_region.regionDo.UseModel(&models.Region{})
 
 	tableName := _region.regionDo.TableName()
 	_region.ALL = field.NewAsterisk(tableName)
@@ -122,17 +122,17 @@ type IRegionDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) IRegionDo
 	Unscoped() IRegionDo
-	Create(values ...*model.Region) error
-	CreateInBatches(values []*model.Region, batchSize int) error
-	Save(values ...*model.Region) error
-	First() (*model.Region, error)
-	Take() (*model.Region, error)
-	Last() (*model.Region, error)
-	Find() ([]*model.Region, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Region, err error)
-	FindInBatches(result *[]*model.Region, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Region) error
+	CreateInBatches(values []*models.Region, batchSize int) error
+	Save(values ...*models.Region) error
+	First() (*models.Region, error)
+	Take() (*models.Region, error)
+	Last() (*models.Region, error)
+	Find() ([]*models.Region, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Region, err error)
+	FindInBatches(result *[]*models.Region, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Region) (info gen.ResultInfo, err error)
+	Delete(...*models.Region) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -144,9 +144,9 @@ type IRegionDo interface {
 	Assign(attrs ...field.AssignExpr) IRegionDo
 	Joins(fields ...field.RelationField) IRegionDo
 	Preload(fields ...field.RelationField) IRegionDo
-	FirstOrInit() (*model.Region, error)
-	FirstOrCreate() (*model.Region, error)
-	FindByPage(offset int, limit int) (result []*model.Region, count int64, err error)
+	FirstOrInit() (*models.Region, error)
+	FirstOrCreate() (*models.Region, error)
+	FindByPage(offset int, limit int) (result []*models.Region, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -248,57 +248,57 @@ func (r regionDo) Unscoped() IRegionDo {
 	return r.withDO(r.DO.Unscoped())
 }
 
-func (r regionDo) Create(values ...*model.Region) error {
+func (r regionDo) Create(values ...*models.Region) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return r.DO.Create(values)
 }
 
-func (r regionDo) CreateInBatches(values []*model.Region, batchSize int) error {
+func (r regionDo) CreateInBatches(values []*models.Region, batchSize int) error {
 	return r.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (r regionDo) Save(values ...*model.Region) error {
+func (r regionDo) Save(values ...*models.Region) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return r.DO.Save(values)
 }
 
-func (r regionDo) First() (*model.Region, error) {
+func (r regionDo) First() (*models.Region, error) {
 	if result, err := r.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Region), nil
+		return result.(*models.Region), nil
 	}
 }
 
-func (r regionDo) Take() (*model.Region, error) {
+func (r regionDo) Take() (*models.Region, error) {
 	if result, err := r.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Region), nil
+		return result.(*models.Region), nil
 	}
 }
 
-func (r regionDo) Last() (*model.Region, error) {
+func (r regionDo) Last() (*models.Region, error) {
 	if result, err := r.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Region), nil
+		return result.(*models.Region), nil
 	}
 }
 
-func (r regionDo) Find() ([]*model.Region, error) {
+func (r regionDo) Find() ([]*models.Region, error) {
 	result, err := r.DO.Find()
-	return result.([]*model.Region), err
+	return result.([]*models.Region), err
 }
 
-func (r regionDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Region, err error) {
-	buf := make([]*model.Region, 0, batchSize)
+func (r regionDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Region, err error) {
+	buf := make([]*models.Region, 0, batchSize)
 	err = r.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -306,7 +306,7 @@ func (r regionDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) erro
 	return results, err
 }
 
-func (r regionDo) FindInBatches(result *[]*model.Region, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (r regionDo) FindInBatches(result *[]*models.Region, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return r.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -332,23 +332,23 @@ func (r regionDo) Preload(fields ...field.RelationField) IRegionDo {
 	return &r
 }
 
-func (r regionDo) FirstOrInit() (*model.Region, error) {
+func (r regionDo) FirstOrInit() (*models.Region, error) {
 	if result, err := r.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Region), nil
+		return result.(*models.Region), nil
 	}
 }
 
-func (r regionDo) FirstOrCreate() (*model.Region, error) {
+func (r regionDo) FirstOrCreate() (*models.Region, error) {
 	if result, err := r.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Region), nil
+		return result.(*models.Region), nil
 	}
 }
 
-func (r regionDo) FindByPage(offset int, limit int) (result []*model.Region, count int64, err error) {
+func (r regionDo) FindByPage(offset int, limit int) (result []*models.Region, count int64, err error) {
 	result, err = r.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -377,7 +377,7 @@ func (r regionDo) Scan(result interface{}) (err error) {
 	return r.DO.Scan(result)
 }
 
-func (r regionDo) Delete(models ...*model.Region) (result gen.ResultInfo, err error) {
+func (r regionDo) Delete(models ...*models.Region) (result gen.ResultInfo, err error) {
 	return r.DO.Delete(models)
 }
 

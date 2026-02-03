@@ -1,0 +1,17 @@
+{
+  "ENVIRONMENT": "test",
+  "SERVER": {
+    "ADDRESS": ":8081"
+  },
+  "DATABASE": {
+    "HOST": "localhost",
+    "PORT": "5432",
+    "USER": "test_user",
+    "PASSWORD": "test_password",
+    "NAME": "test_db"
+  },
+  "JWT": {
+    "SECRET": "test-secret-key",
+    "EXPIRY_HOURS": 24
+  }
+}

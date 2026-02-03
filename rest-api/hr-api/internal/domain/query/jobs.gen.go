@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newJob(db *gorm.DB, opts ...gen.DOOption) job {
 	_job := job{}
 
 	_job.jobDo.UseDB(db, opts...)
-	_job.jobDo.UseModel(&model.Job{})
+	_job.jobDo.UseModel(&models.Job{})
 
 	tableName := _job.jobDo.TableName()
 	_job.ALL = field.NewAsterisk(tableName)
@@ -130,17 +130,17 @@ type IJobDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) IJobDo
 	Unscoped() IJobDo
-	Create(values ...*model.Job) error
-	CreateInBatches(values []*model.Job, batchSize int) error
-	Save(values ...*model.Job) error
-	First() (*model.Job, error)
-	Take() (*model.Job, error)
-	Last() (*model.Job, error)
-	Find() ([]*model.Job, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Job, err error)
-	FindInBatches(result *[]*model.Job, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Job) error
+	CreateInBatches(values []*models.Job, batchSize int) error
+	Save(values ...*models.Job) error
+	First() (*models.Job, error)
+	Take() (*models.Job, error)
+	Last() (*models.Job, error)
+	Find() ([]*models.Job, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Job, err error)
+	FindInBatches(result *[]*models.Job, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Job) (info gen.ResultInfo, err error)
+	Delete(...*models.Job) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -152,9 +152,9 @@ type IJobDo interface {
 	Assign(attrs ...field.AssignExpr) IJobDo
 	Joins(fields ...field.RelationField) IJobDo
 	Preload(fields ...field.RelationField) IJobDo
-	FirstOrInit() (*model.Job, error)
-	FirstOrCreate() (*model.Job, error)
-	FindByPage(offset int, limit int) (result []*model.Job, count int64, err error)
+	FirstOrInit() (*models.Job, error)
+	FirstOrCreate() (*models.Job, error)
+	FindByPage(offset int, limit int) (result []*models.Job, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -256,57 +256,57 @@ func (j jobDo) Unscoped() IJobDo {
 	return j.withDO(j.DO.Unscoped())
 }
 
-func (j jobDo) Create(values ...*model.Job) error {
+func (j jobDo) Create(values ...*models.Job) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return j.DO.Create(values)
 }
 
-func (j jobDo) CreateInBatches(values []*model.Job, batchSize int) error {
+func (j jobDo) CreateInBatches(values []*models.Job, batchSize int) error {
 	return j.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (j jobDo) Save(values ...*model.Job) error {
+func (j jobDo) Save(values ...*models.Job) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return j.DO.Save(values)
 }
 
-func (j jobDo) First() (*model.Job, error) {
+func (j jobDo) First() (*models.Job, error) {
 	if result, err := j.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Job), nil
+		return result.(*models.Job), nil
 	}
 }
 
-func (j jobDo) Take() (*model.Job, error) {
+func (j jobDo) Take() (*models.Job, error) {
 	if result, err := j.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Job), nil
+		return result.(*models.Job), nil
 	}
 }
 
-func (j jobDo) Last() (*model.Job, error) {
+func (j jobDo) Last() (*models.Job, error) {
 	if result, err := j.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Job), nil
+		return result.(*models.Job), nil
 	}
 }
 
-func (j jobDo) Find() ([]*model.Job, error) {
+func (j jobDo) Find() ([]*models.Job, error) {
 	result, err := j.DO.Find()
-	return result.([]*model.Job), err
+	return result.([]*models.Job), err
 }
 
-func (j jobDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Job, err error) {
-	buf := make([]*model.Job, 0, batchSize)
+func (j jobDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Job, err error) {
+	buf := make([]*models.Job, 0, batchSize)
 	err = j.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -314,7 +314,7 @@ func (j jobDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) 
 	return results, err
 }
 
-func (j jobDo) FindInBatches(result *[]*model.Job, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (j jobDo) FindInBatches(result *[]*models.Job, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return j.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -340,23 +340,23 @@ func (j jobDo) Preload(fields ...field.RelationField) IJobDo {
 	return &j
 }
 
-func (j jobDo) FirstOrInit() (*model.Job, error) {
+func (j jobDo) FirstOrInit() (*models.Job, error) {
 	if result, err := j.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Job), nil
+		return result.(*models.Job), nil
 	}
 }
 
-func (j jobDo) FirstOrCreate() (*model.Job, error) {
+func (j jobDo) FirstOrCreate() (*models.Job, error) {
 	if result, err := j.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Job), nil
+		return result.(*models.Job), nil
 	}
 }
 
-func (j jobDo) FindByPage(offset int, limit int) (result []*model.Job, count int64, err error) {
+func (j jobDo) FindByPage(offset int, limit int) (result []*models.Job, count int64, err error) {
 	result, err = j.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -385,7 +385,7 @@ func (j jobDo) Scan(result interface{}) (err error) {
 	return j.DO.Scan(result)
 }
 
-func (j jobDo) Delete(models ...*model.Job) (result gen.ResultInfo, err error) {
+func (j jobDo) Delete(models ...*models.Job) (result gen.ResultInfo, err error) {
 	return j.DO.Delete(models)
 }
 

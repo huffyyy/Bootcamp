@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 	_employee := employee{}
 
 	_employee.employeeDo.UseDB(db, opts...)
-	_employee.employeeDo.UseModel(&model.Employee{})
+	_employee.employeeDo.UseModel(&models.Employee{})
 
 	tableName := _employee.employeeDo.TableName()
 	_employee.ALL = field.NewAsterisk(tableName)
@@ -154,17 +154,17 @@ type IEmployeeDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) IEmployeeDo
 	Unscoped() IEmployeeDo
-	Create(values ...*model.Employee) error
-	CreateInBatches(values []*model.Employee, batchSize int) error
-	Save(values ...*model.Employee) error
-	First() (*model.Employee, error)
-	Take() (*model.Employee, error)
-	Last() (*model.Employee, error)
-	Find() ([]*model.Employee, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Employee, err error)
-	FindInBatches(result *[]*model.Employee, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Employee) error
+	CreateInBatches(values []*models.Employee, batchSize int) error
+	Save(values ...*models.Employee) error
+	First() (*models.Employee, error)
+	Take() (*models.Employee, error)
+	Last() (*models.Employee, error)
+	Find() ([]*models.Employee, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Employee, err error)
+	FindInBatches(result *[]*models.Employee, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Employee) (info gen.ResultInfo, err error)
+	Delete(...*models.Employee) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -176,9 +176,9 @@ type IEmployeeDo interface {
 	Assign(attrs ...field.AssignExpr) IEmployeeDo
 	Joins(fields ...field.RelationField) IEmployeeDo
 	Preload(fields ...field.RelationField) IEmployeeDo
-	FirstOrInit() (*model.Employee, error)
-	FirstOrCreate() (*model.Employee, error)
-	FindByPage(offset int, limit int) (result []*model.Employee, count int64, err error)
+	FirstOrInit() (*models.Employee, error)
+	FirstOrCreate() (*models.Employee, error)
+	FindByPage(offset int, limit int) (result []*models.Employee, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -280,57 +280,57 @@ func (e employeeDo) Unscoped() IEmployeeDo {
 	return e.withDO(e.DO.Unscoped())
 }
 
-func (e employeeDo) Create(values ...*model.Employee) error {
+func (e employeeDo) Create(values ...*models.Employee) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return e.DO.Create(values)
 }
 
-func (e employeeDo) CreateInBatches(values []*model.Employee, batchSize int) error {
+func (e employeeDo) CreateInBatches(values []*models.Employee, batchSize int) error {
 	return e.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (e employeeDo) Save(values ...*model.Employee) error {
+func (e employeeDo) Save(values ...*models.Employee) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return e.DO.Save(values)
 }
 
-func (e employeeDo) First() (*model.Employee, error) {
+func (e employeeDo) First() (*models.Employee, error) {
 	if result, err := e.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Employee), nil
+		return result.(*models.Employee), nil
 	}
 }
 
-func (e employeeDo) Take() (*model.Employee, error) {
+func (e employeeDo) Take() (*models.Employee, error) {
 	if result, err := e.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Employee), nil
+		return result.(*models.Employee), nil
 	}
 }
 
-func (e employeeDo) Last() (*model.Employee, error) {
+func (e employeeDo) Last() (*models.Employee, error) {
 	if result, err := e.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Employee), nil
+		return result.(*models.Employee), nil
 	}
 }
 
-func (e employeeDo) Find() ([]*model.Employee, error) {
+func (e employeeDo) Find() ([]*models.Employee, error) {
 	result, err := e.DO.Find()
-	return result.([]*model.Employee), err
+	return result.([]*models.Employee), err
 }
 
-func (e employeeDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Employee, err error) {
-	buf := make([]*model.Employee, 0, batchSize)
+func (e employeeDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Employee, err error) {
+	buf := make([]*models.Employee, 0, batchSize)
 	err = e.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -338,7 +338,7 @@ func (e employeeDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) er
 	return results, err
 }
 
-func (e employeeDo) FindInBatches(result *[]*model.Employee, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (e employeeDo) FindInBatches(result *[]*models.Employee, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return e.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -364,23 +364,23 @@ func (e employeeDo) Preload(fields ...field.RelationField) IEmployeeDo {
 	return &e
 }
 
-func (e employeeDo) FirstOrInit() (*model.Employee, error) {
+func (e employeeDo) FirstOrInit() (*models.Employee, error) {
 	if result, err := e.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Employee), nil
+		return result.(*models.Employee), nil
 	}
 }
 
-func (e employeeDo) FirstOrCreate() (*model.Employee, error) {
+func (e employeeDo) FirstOrCreate() (*models.Employee, error) {
 	if result, err := e.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Employee), nil
+		return result.(*models.Employee), nil
 	}
 }
 
-func (e employeeDo) FindByPage(offset int, limit int) (result []*model.Employee, count int64, err error) {
+func (e employeeDo) FindByPage(offset int, limit int) (result []*models.Employee, count int64, err error) {
 	result, err = e.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -409,7 +409,7 @@ func (e employeeDo) Scan(result interface{}) (err error) {
 	return e.DO.Scan(result)
 }
 
-func (e employeeDo) Delete(models ...*model.Employee) (result gen.ResultInfo, err error) {
+func (e employeeDo) Delete(models ...*models.Employee) (result gen.ResultInfo, err error) {
 	return e.DO.Delete(models)
 }
 

@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newDepartment(db *gorm.DB, opts ...gen.DOOption) department {
 	_department := department{}
 
 	_department.departmentDo.UseDB(db, opts...)
-	_department.departmentDo.UseModel(&model.Department{})
+	_department.departmentDo.UseModel(&models.Department{})
 
 	tableName := _department.departmentDo.TableName()
 	_department.ALL = field.NewAsterisk(tableName)
@@ -126,17 +126,17 @@ type IDepartmentDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) IDepartmentDo
 	Unscoped() IDepartmentDo
-	Create(values ...*model.Department) error
-	CreateInBatches(values []*model.Department, batchSize int) error
-	Save(values ...*model.Department) error
-	First() (*model.Department, error)
-	Take() (*model.Department, error)
-	Last() (*model.Department, error)
-	Find() ([]*model.Department, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Department, err error)
-	FindInBatches(result *[]*model.Department, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Department) error
+	CreateInBatches(values []*models.Department, batchSize int) error
+	Save(values ...*models.Department) error
+	First() (*models.Department, error)
+	Take() (*models.Department, error)
+	Last() (*models.Department, error)
+	Find() ([]*models.Department, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Department, err error)
+	FindInBatches(result *[]*models.Department, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Department) (info gen.ResultInfo, err error)
+	Delete(...*models.Department) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -148,9 +148,9 @@ type IDepartmentDo interface {
 	Assign(attrs ...field.AssignExpr) IDepartmentDo
 	Joins(fields ...field.RelationField) IDepartmentDo
 	Preload(fields ...field.RelationField) IDepartmentDo
-	FirstOrInit() (*model.Department, error)
-	FirstOrCreate() (*model.Department, error)
-	FindByPage(offset int, limit int) (result []*model.Department, count int64, err error)
+	FirstOrInit() (*models.Department, error)
+	FirstOrCreate() (*models.Department, error)
+	FindByPage(offset int, limit int) (result []*models.Department, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -252,57 +252,57 @@ func (d departmentDo) Unscoped() IDepartmentDo {
 	return d.withDO(d.DO.Unscoped())
 }
 
-func (d departmentDo) Create(values ...*model.Department) error {
+func (d departmentDo) Create(values ...*models.Department) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return d.DO.Create(values)
 }
 
-func (d departmentDo) CreateInBatches(values []*model.Department, batchSize int) error {
+func (d departmentDo) CreateInBatches(values []*models.Department, batchSize int) error {
 	return d.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (d departmentDo) Save(values ...*model.Department) error {
+func (d departmentDo) Save(values ...*models.Department) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return d.DO.Save(values)
 }
 
-func (d departmentDo) First() (*model.Department, error) {
+func (d departmentDo) First() (*models.Department, error) {
 	if result, err := d.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Department), nil
+		return result.(*models.Department), nil
 	}
 }
 
-func (d departmentDo) Take() (*model.Department, error) {
+func (d departmentDo) Take() (*models.Department, error) {
 	if result, err := d.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Department), nil
+		return result.(*models.Department), nil
 	}
 }
 
-func (d departmentDo) Last() (*model.Department, error) {
+func (d departmentDo) Last() (*models.Department, error) {
 	if result, err := d.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Department), nil
+		return result.(*models.Department), nil
 	}
 }
 
-func (d departmentDo) Find() ([]*model.Department, error) {
+func (d departmentDo) Find() ([]*models.Department, error) {
 	result, err := d.DO.Find()
-	return result.([]*model.Department), err
+	return result.([]*models.Department), err
 }
 
-func (d departmentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Department, err error) {
-	buf := make([]*model.Department, 0, batchSize)
+func (d departmentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Department, err error) {
+	buf := make([]*models.Department, 0, batchSize)
 	err = d.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -310,7 +310,7 @@ func (d departmentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) 
 	return results, err
 }
 
-func (d departmentDo) FindInBatches(result *[]*model.Department, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (d departmentDo) FindInBatches(result *[]*models.Department, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return d.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -336,23 +336,23 @@ func (d departmentDo) Preload(fields ...field.RelationField) IDepartmentDo {
 	return &d
 }
 
-func (d departmentDo) FirstOrInit() (*model.Department, error) {
+func (d departmentDo) FirstOrInit() (*models.Department, error) {
 	if result, err := d.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Department), nil
+		return result.(*models.Department), nil
 	}
 }
 
-func (d departmentDo) FirstOrCreate() (*model.Department, error) {
+func (d departmentDo) FirstOrCreate() (*models.Department, error) {
 	if result, err := d.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Department), nil
+		return result.(*models.Department), nil
 	}
 }
 
-func (d departmentDo) FindByPage(offset int, limit int) (result []*model.Department, count int64, err error) {
+func (d departmentDo) FindByPage(offset int, limit int) (result []*models.Department, count int64, err error) {
 	result, err = d.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -381,7 +381,7 @@ func (d departmentDo) Scan(result interface{}) (err error) {
 	return d.DO.Scan(result)
 }
 
-func (d departmentDo) Delete(models ...*model.Department) (result gen.ResultInfo, err error) {
+func (d departmentDo) Delete(models ...*models.Department) (result gen.ResultInfo, err error) {
 	return d.DO.Delete(models)
 }
 

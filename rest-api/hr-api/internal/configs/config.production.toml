@@ -1,0 +1,43 @@
+# config.production.toml
+ENVIRONMENT = "production"
+
+[SERVER]
+ADDRESS = ":8080"
+READ_TIMEOUT = 30
+WRITE_TIMEOUT = 30
+
+[DATABASE]
+HOST = "localhost"
+PORT = 5432
+USER = "postgres"
+PASSWORD = "${DB_PASSWORD}"  # direplace saat running
+NAME = "hr_db_prod"
+SSL_MODE = "require"
+MAX_OPEN_CONNS = 50
+MAX_IDLE_CONNS = 10
+CONN_MAX_LIFETIME = 300
+
+[JWT]
+SECRET = "${JWT_SECRET}"
+EXPIRY_HOURS = 24
+
+[STORAGE]
+BASE_PATH = "/app/storage/uploads"
+MAX_FILE_SIZE = 10485760
+PUBLIC_URL = "https://hr-api.com/uploads/"
+
+[STORAGE.EMPLOYEES]
+MAX_SIZE = 5242880
+ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png"]
+SUBDIRECTORY = "employees"
+
+[LOGGING]
+LEVEL = "warn"
+FORMAT = "json"
+OUTPUT = "file"
+
+[CORS]
+ALLOWED_ORIGINS = ["https://hr-api.com", "https://www.hr-api.com"]
+ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+ALLOWED_HEADERS = ["Content-Type", "Authorization"]
+ALLOW_CREDENTIALS = true

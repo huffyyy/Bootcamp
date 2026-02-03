@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/hr-api/internal/domain/model"
+	"github.com/codeid/hr-api/internal/domain/models"
 )
 
 func newDependent(db *gorm.DB, opts ...gen.DOOption) dependent {
 	_dependent := dependent{}
 
 	_dependent.dependentDo.UseDB(db, opts...)
-	_dependent.dependentDo.UseModel(&model.Dependent{})
+	_dependent.dependentDo.UseModel(&models.Dependent{})
 
 	tableName := _dependent.dependentDo.TableName()
 	_dependent.ALL = field.NewAsterisk(tableName)
@@ -134,17 +134,17 @@ type IDependentDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) IDependentDo
 	Unscoped() IDependentDo
-	Create(values ...*model.Dependent) error
-	CreateInBatches(values []*model.Dependent, batchSize int) error
-	Save(values ...*model.Dependent) error
-	First() (*model.Dependent, error)
-	Take() (*model.Dependent, error)
-	Last() (*model.Dependent, error)
-	Find() ([]*model.Dependent, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Dependent, err error)
-	FindInBatches(result *[]*model.Dependent, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*models.Dependent) error
+	CreateInBatches(values []*models.Dependent, batchSize int) error
+	Save(values ...*models.Dependent) error
+	First() (*models.Dependent, error)
+	Take() (*models.Dependent, error)
+	Last() (*models.Dependent, error)
+	Find() ([]*models.Dependent, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Dependent, err error)
+	FindInBatches(result *[]*models.Dependent, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Dependent) (info gen.ResultInfo, err error)
+	Delete(...*models.Dependent) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -156,9 +156,9 @@ type IDependentDo interface {
 	Assign(attrs ...field.AssignExpr) IDependentDo
 	Joins(fields ...field.RelationField) IDependentDo
 	Preload(fields ...field.RelationField) IDependentDo
-	FirstOrInit() (*model.Dependent, error)
-	FirstOrCreate() (*model.Dependent, error)
-	FindByPage(offset int, limit int) (result []*model.Dependent, count int64, err error)
+	FirstOrInit() (*models.Dependent, error)
+	FirstOrCreate() (*models.Dependent, error)
+	FindByPage(offset int, limit int) (result []*models.Dependent, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -260,57 +260,57 @@ func (d dependentDo) Unscoped() IDependentDo {
 	return d.withDO(d.DO.Unscoped())
 }
 
-func (d dependentDo) Create(values ...*model.Dependent) error {
+func (d dependentDo) Create(values ...*models.Dependent) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return d.DO.Create(values)
 }
 
-func (d dependentDo) CreateInBatches(values []*model.Dependent, batchSize int) error {
+func (d dependentDo) CreateInBatches(values []*models.Dependent, batchSize int) error {
 	return d.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (d dependentDo) Save(values ...*model.Dependent) error {
+func (d dependentDo) Save(values ...*models.Dependent) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return d.DO.Save(values)
 }
 
-func (d dependentDo) First() (*model.Dependent, error) {
+func (d dependentDo) First() (*models.Dependent, error) {
 	if result, err := d.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Dependent), nil
+		return result.(*models.Dependent), nil
 	}
 }
 
-func (d dependentDo) Take() (*model.Dependent, error) {
+func (d dependentDo) Take() (*models.Dependent, error) {
 	if result, err := d.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Dependent), nil
+		return result.(*models.Dependent), nil
 	}
 }
 
-func (d dependentDo) Last() (*model.Dependent, error) {
+func (d dependentDo) Last() (*models.Dependent, error) {
 	if result, err := d.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Dependent), nil
+		return result.(*models.Dependent), nil
 	}
 }
 
-func (d dependentDo) Find() ([]*model.Dependent, error) {
+func (d dependentDo) Find() ([]*models.Dependent, error) {
 	result, err := d.DO.Find()
-	return result.([]*model.Dependent), err
+	return result.([]*models.Dependent), err
 }
 
-func (d dependentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Dependent, err error) {
-	buf := make([]*model.Dependent, 0, batchSize)
+func (d dependentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*models.Dependent, err error) {
+	buf := make([]*models.Dependent, 0, batchSize)
 	err = d.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -318,7 +318,7 @@ func (d dependentDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) e
 	return results, err
 }
 
-func (d dependentDo) FindInBatches(result *[]*model.Dependent, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (d dependentDo) FindInBatches(result *[]*models.Dependent, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return d.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -344,23 +344,23 @@ func (d dependentDo) Preload(fields ...field.RelationField) IDependentDo {
 	return &d
 }
 
-func (d dependentDo) FirstOrInit() (*model.Dependent, error) {
+func (d dependentDo) FirstOrInit() (*models.Dependent, error) {
 	if result, err := d.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Dependent), nil
+		return result.(*models.Dependent), nil
 	}
 }
 
-func (d dependentDo) FirstOrCreate() (*model.Dependent, error) {
+func (d dependentDo) FirstOrCreate() (*models.Dependent, error) {
 	if result, err := d.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Dependent), nil
+		return result.(*models.Dependent), nil
 	}
 }
 
-func (d dependentDo) FindByPage(offset int, limit int) (result []*model.Dependent, count int64, err error) {
+func (d dependentDo) FindByPage(offset int, limit int) (result []*models.Dependent, count int64, err error) {
 	result, err = d.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -389,7 +389,7 @@ func (d dependentDo) Scan(result interface{}) (err error) {
 	return d.DO.Scan(result)
 }
 
-func (d dependentDo) Delete(models ...*model.Dependent) (result gen.ResultInfo, err error) {
+func (d dependentDo) Delete(models ...*models.Dependent) (result gen.ResultInfo, err error) {
 	return d.DO.Delete(models)
 }
 

@@ -16,8 +16,8 @@ type Config struct {
 	Database    DatabaseConfig `mapstructure:"DATABASE"`
 	JWT         JWTConfig      `mapstructure:"JWT"`
 	// add in day 4
-	/* 	Storage     StorageConfig  `mapstructure:"STORAGE"`
-	   	CORS        CORSConfig     `mapstructure:"CORS"` */
+	Storage     StorageConfig  `mapstructure:"STORAGE"`
+	CORS        CORSConfig     `mapstructure:"CORS"`
 }
 
 type ServerConfig struct {
@@ -45,7 +45,7 @@ type JWTConfig struct {
 	Expiry int    `mapstructure:"EXPIRY_HOURS"`
 }
 
-/* type StorageConfig struct {
+type StorageConfig struct {
 	BasePath     string              `mapstructure:"BASE_PATH"`
 	MaxFileSize  int64               `mapstructure:"MAX_FILE_SIZE"`
 	PublicURL    string              `mapstructure:"PUBLIC_URL"`
@@ -53,18 +53,18 @@ type JWTConfig struct {
 	Employees    ModuleStorageConfig `mapstructure:"EMPLOYEES"`
 	Products     ModuleStorageConfig `mapstructure:"PRODUCTS"`
 	Documents    ModuleStorageConfig `mapstructure:"DOCUMENTS"`
-} */
+}
 
-/* type AllowedTypesConfig struct {
+type AllowedTypesConfig struct {
 	Image    []string `mapstructure:"IMAGE"`
 	Document []string `mapstructure:"DOCUMENT"`
-} */
+}
 
-/* type ModuleStorageConfig struct {
+type ModuleStorageConfig struct {
 	MaxSize      int64    `mapstructure:"MAX_SIZE"`
 	AllowedTypes []string `mapstructure:"ALLOWED_TYPES"`
 	Subdirectory string   `mapstructure:"SUBDIRECTORY"`
-} */
+}
 
 type CORSConfig struct {
 	AllowedOrigins   []string `mapstructure:"ALLOWED_ORIGINS"`
