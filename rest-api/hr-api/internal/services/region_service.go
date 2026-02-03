@@ -17,7 +17,6 @@ type RegionService interface {
 	GetAllRegionsWithCountry(ctx context.Context) ([]models.Region, error)
 	GetRegionByIDWithCountry(ctx context.Context, id uint) (*models.Region, error)
 }
-
 type regionService struct {
 	regionRepo repositories.RegionRepository
 }
