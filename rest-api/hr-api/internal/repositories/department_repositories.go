@@ -26,9 +26,9 @@ type departmentRepository struct {
 }
 
 // SearchByName implements DepartmentRepository.
-func (d *departmentRepository) SearchByName(ctx context.Context, name string) ([]*models.Department, error) {
-	departments, err := d.Q.Department.WithContext(ctx).
-		Where(d.Q.Department.DepartmentName.Like("%" + name + "%")).Find()
+func (r *departmentRepository) SearchByName(ctx context.Context, name string) ([]*models.Department, error) {
+	departments, err := r.Q.Department.WithContext(ctx).
+		Where(r.Q.Department.DepartmentName.Like("%" + name + "%")).Find()
 	if err != nil {
 		return nil, err
 	}
@@ -36,13 +36,13 @@ func (d *departmentRepository) SearchByName(ctx context.Context, name string) ([
 }
 
 // Create implements DepartmentRepository.
-func (d *departmentRepository) Create(ctx context.Context, department *models.Department) error {
-	return d.Q.Department.WithContext(ctx).Create(department)
+func (r *departmentRepository) Create(ctx context.Context, department *models.Department) error {
+	return r.Q.Department.WithContext(ctx).Create(department)
 }
 
 // Delete implements DepartmentRepository.
-func (d *departmentRepository) Delete(ctx context.Context, id uint) error {
-	_, err := d.Q.Department.WithContext(ctx).Where(d.Q.Department.DepartmentID.Eq(int32(id))).Delete(&models.Department{})
+func (r *departmentRepository) Delete(ctx context.Context, id uint) error {
+	_, err := r.Q.Department.WithContext(ctx).Where(r.Q.Department.DepartmentID.Eq(int32(id))).Delete(&models.Department{})
 	if err != nil {
 		return err
 	}
@@ -50,9 +50,9 @@ func (d *departmentRepository) Delete(ctx context.Context, id uint) error {
 }
 
 // FindAll implements DepartmentRepository.
-func (d *departmentRepository) FindAll(ctx context.Context) ([]*models.Department, error) {
+func (r *departmentRepository) FindAll(ctx context.Context) ([]*models.Department, error) {
 	var departments []*models.Department
-	departments, err := d.Q.Department.WithContext(ctx).Find()
+	departments, err := r.Q.Department.WithContext(ctx).Find()
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +60,8 @@ func (d *departmentRepository) FindAll(ctx context.Context) ([]*models.Departmen
 }
 
 // FindByID implements DepartmentRepository.
-func (d *departmentRepository) FindByID(ctx context.Context, id uint) (*models.Department, error) {
-	department, err := d.Q.Department.WithContext(ctx).Where(d.Q.Department.DepartmentID.Eq(int32(id))).First()
+func (r *departmentRepository) FindByID(ctx context.Context, id uint) (*models.Department, error) {
+	department, err := r.Q.Department.WithContext(ctx).Where(r.Q.Department.DepartmentID.Eq(int32(id))).First()
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +69,6 @@ func (d *departmentRepository) FindByID(ctx context.Context, id uint) (*models.D
 }
 
 // Update implements DepartmentRepository.
-func (d *departmentRepository) Update(ctx context.Context, department *models.Department) error {
-	return d.Q.Department.WithContext(ctx).Save(department)
+func (r *departmentRepository) Update(ctx context.Context, department *models.Department) error {
+	return r.Q.Department.WithContext(ctx).Save(department)
 }

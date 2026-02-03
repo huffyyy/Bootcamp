@@ -16,14 +16,17 @@ import (
 		//5. Initialize repositories
 		regionRepo := repositories.NewRegionRepository(db)
 		departmentRepo := repositories.NewDepartmentRepository(db)
+		employeeRepo := repositories.NewEmployeeRepository(db)
 
 		//6. Initialize services
 		regionService := services.NewRegionService(regionRepo)
 		departmentService := services.NewDepartmentService(departmentRepo)
+		employeeService := services.NewEmployeeService(employeeRepo)
 
 		//7. Initialize handlers
 		regionHandler := handlers.NewRegionHandler(regionService)
 		depatmentHandler := handlers.NewDepartmentHandler(departmentService)
+		employeeHandler := handlers.NewEmployeeHandler(employeeService)
 
 		//3.1 call handler
 		router.GET("/", welcomeHandler)
@@ -55,6 +58,16 @@ import (
 				department.PUT("/:id", depatmentHandler.UpdateDepartment)
 				department.DELETE("/:id", depatmentHandler.DeleteDepartment)
 				department.GET("/search", depatmentHandler.SearchDepartments) 
+			}
+
+			employee := api.Group("/employee")
+			{
+				employee.POST("", employeeHandler.CreateEmployee)
+				employee.GET("/:id", employeeHandler.GetEmployeeByID)
+				employee.GET("", employeeHandler.GetAllEmployee)
+				employee.PUT("/:id", employeeHandler.UpdateHandler)
+				employee.DELETE("/:id", employeeHandler.DeleteEmployee)
+				employee.GET("/search", employeeHandler.SearchEmployees)
 			}
 
 		}
