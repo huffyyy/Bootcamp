@@ -3,66 +3,60 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/codeid/hr-api/internal/handlers"
-	"github.com/codeid/hr-api/internal/repositories"
-	"github.com/codeid/hr-api/internal/services"
+	"github.com/codeid/hr-api/api/routes"
+	"github.com/codeid/hr-api/internal/configs"
+	"github.com/codeid/hr-api/internal/models"
 	"github.com/codeid/hr-api/pkg/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//1. set datasourcename db config
-	db, err := database.SetupDB() //posggre
+	//1. set environment (bisa cmd atau system environment)
+	os.Setenv("APP_ENV", "development")
+
+	//2.Load configuration
+	config := configs.Load()
+
+	//1. current code lebih minimalis
+	db, err := database.InitDB(config)
 	if err != nil {
-		log.Fatal("failed to connect db:%w", err)
+		log.Fatal("failed to initialize database:%w", err)
+	}
+	defer database.CloseDB(db)
+
+	// Run auto migration
+	if err := database.AutoMigrate(db, &models.Region{}, &models.Country{}); err != nil {
+		log.Printf("Warning: Auto migration failed: %v", err)
 	}
 
-	//1.1 initautomigrate --> baru
-	database.InitAutoMigrate(db)
+	// Set Gin mode based on environment
+	if config.Environment == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
 
-	//init repositories
-	regionRepo := repositories.NewRegionRepository(db)
-
-	//init service
-	regionService := services.NewRegionService(regionRepo)
-
-	//init handler/controler
-	regionHandler := handlers.NewRegionHandler(regionService)
-
-	//3. setup route
+	// Setup routes
 	router := gin.Default()
+	routes.SetupRoutes(router, db.DB)
 
-	//4. create router endpoint
-	api := router.Group("/api")
-	{
-		//create region route
-		regions := api.Group("/regions")
-		{
-			regions.GET("", regionHandler.GetRegions)
-			regions.GET("/:id", regionHandler.GetRegion)
-			regions.POST("", regionHandler.CreateRegion)
-			regions.PUT("/:id", regionHandler.UpdateRegion)
-			regions.DELETE("/:id", regionHandler.DeleteRegion)
-			regions.GET("/countries", regionHandler.GetRegionsWithCountry)
-			//add new endpoint
-			regions.GET("/:id/countries", regionHandler.GetRegionByIdWithCountry)
+	// Start server
+	log.Printf("Server starting on %s in %s mode", config.Server.Address, config.Environment)
+
+	go func() {
+	if err := router.Run(config.Server.Address); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("Failed to start server: %v", err)
 		}
+	}()
 
-		//countries
-
-	}
-
-	//3.1 call handler
-	router.GET("/", helloWorldHandler)
-
-	//4. run webserver di port 8080
-	router.Run(":8080")
-}
-
-func helloWorldHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello world",
-		"status":  "running",
-	})
+	// 1. Graceful shutdown : nunggu operasi selesai baru shutdown server
+	// 2. Tanpa Graceful Shutdowon : close connection,ada kemungkinan operasi seperti query masih jalan
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
 }
