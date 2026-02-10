@@ -1,0 +1,19 @@
+# Environment
+ENVIRONMENT: "development"
+
+# Server Configuration
+SERVER:
+  ADDRESS: ":8080"
+
+# Database Configuration
+DATABASE:
+  HOST: "localhost"
+  PORT: "5432"
+  USER: "postgres"
+  PASSWORD: "admin"
+  NAME: "hr_db_dev"
+
+# JWT Configuration
+JWT:
+  SECRET: "my-secret"
+  EXPIRY_HOURS: 24
