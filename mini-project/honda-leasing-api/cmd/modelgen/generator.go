@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Connect ke DB (schema sudah dimigrasi)
-	dsn := "host=localhost user=postgres password=admin dbname=hr_db_dev port=5432 sslmode=disable search_path=hr"
+	dsn := "host=localhost user=postgres password=admin123 dbname=leasing_db port=5432 sslmode=disable search_path=mst"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
