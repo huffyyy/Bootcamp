@@ -1,16 +1,20 @@
 package dto
 
+// MotorListResponse for output (hide internal fields if needed)
 type MotorListResponse struct {
-	ID       int32   `json:"id"`
-	Name     string  `json:"name"`
-	Price    float64 `json:"price"`
-	ImageURL string  `json:"image_url"`
+	MotorID   int64   `json:"motor_id"`
+	NamaModel string  `json:"nama_model"`
+	Merk      string  `json:"merk"`
+	HargaOtr  float64 `json:"harga_otr"`
+	MotyName  string  `json:"moty_name"`
+	FileName  string  `json:"file_name"`
 }
 
+// MotorDetailResponse for output (hide internal fields if needed)
 type MotorDetailResponse struct {
-	ID          int32    `json:"id"`
-	Name        string   `json:"name"`
-	Price       float64  `json:"price"`
-	Features    []string `json:"features"`
-	Description string   `json:"description"`
+	MotorID   int64   `json:"motor_id"`
+	NamaModel string  `json:"nama_model"`
+	Merk      string  `json:"merk"`
+	HargaOtr  float64 `json:"harga_otr"`
+	FileName  string  `json:"file_name"`
 }

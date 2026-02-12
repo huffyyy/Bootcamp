@@ -16,8 +16,8 @@ type Config struct {
 	Database    DatabaseConfig `mapstructure:"DATABASE"`
 	JWT         JWTConfig      `mapstructure:"JWT"`
 	// add in day 4
-	Storage     StorageConfig  `mapstructure:"STORAGE"`
-	CORS        CORSConfig     `mapstructure:"CORS"`
+	Storage StorageConfig `mapstructure:"STORAGE"`
+	CORS    CORSConfig    `mapstructure:"CORS"`
 }
 
 type ServerConfig struct {
@@ -98,7 +98,7 @@ func Load() *Config {
 	viper.SetConfigFile(configPath)
 	viper.AutomaticEnv()
 
-	// jika file config.toml tidak ketemu, kita gunakan setting default 
+	// jika file config.toml tidak ketemu, kita gunakan setting default
 	setDefaults()
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -118,10 +118,10 @@ func Load() *Config {
 
 // untuk cari file config.development.go
 func getConfigDir() (string, error) {
-	_, filename, _, ok := runtime.Caller(0) 
+	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		return "", fmt.Errorf("could not get current file path")
-	}	
+	}
 	return filepath.Dir(filename), nil
 }
 
@@ -138,7 +138,7 @@ func setDefaults() {
 	viper.SetDefault("DATABASE.PORT", "5432")
 	viper.SetDefault("DATABASE.USER", "postgres")
 	viper.SetDefault("DATABASE.PASSWORD", "admin123")
-	viper.SetDefault("DATABASE.NAME", "hr_db_dev")
+	viper.SetDefault("DATABASE.NAME", "leasing_db")
 	viper.SetDefault("DATABASE.SSL_MODE", "disable")
 	viper.SetDefault("DATABASE.TIMEZONE", "Asia/Jakarta")
 	viper.SetDefault("DATABASE.MAX_OPEN_CONNS", 25)
@@ -156,18 +156,18 @@ func setDefaults() {
 
 	// Storage allowed types defaults
 	viper.SetDefault("STORAGE.ALLOWED_TYPES.IMAGE", []string{"image/jpeg",
-	"image/jpg", "image/png", "image/gif"})
+		"image/jpg", "image/png", "image/gif"})
 	viper.SetDefault("STORAGE.ALLOWED_TYPES.DOCUMENT", []string{"application/pdf", "application/msword", "application/vnd.openxmlformatsofficedocument.wordprocessingml.document"})
-	
+
 	// Employee storage defaults
 	viper.SetDefault("STORAGE.EMPLOYEES.MAX_SIZE", 5242880) // 5MB
-	viper.SetDefault("STORAGE.EMPLOYEES.ALLOWED_TYPES", []string{"image/jpeg","image/jpg", "image/png"})
+	viper.SetDefault("STORAGE.EMPLOYEES.ALLOWED_TYPES", []string{"image/jpeg", "image/jpg", "image/png"})
 	viper.SetDefault("STORAGE.EMPLOYEES.SUBDIRECTORY", "employees")
 
 	// CORS defaults
-	viper.SetDefault("CORS.ALLOWED_ORIGINS", []string{"http://localhost:3000","http://127.0.0.1:3000"})
-	viper.SetDefault("CORS.ALLOWED_METHODS", []string{"GET", "POST", "PUT","DELETE", "OPTIONS"})
-	viper.SetDefault("CORS.ALLOWED_HEADERS", []string{"Content-Type","Authorization"})
+	viper.SetDefault("CORS.ALLOWED_ORIGINS", []string{"http://localhost:3000", "http://127.0.0.1:3000"})
+	viper.SetDefault("CORS.ALLOWED_METHODS", []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	viper.SetDefault("CORS.ALLOWED_HEADERS", []string{"Content-Type", "Authorization"})
 	viper.SetDefault("CORS.ALLOW_CREDENTIALS", true)
-	viper.SetDefault("SERVER.TRUSTED_PROXIES", []string{"127.0.0.1", "localhost","::1"})
+	viper.SetDefault("SERVER.TRUSTED_PROXIES", []string{"127.0.0.1", "localhost", "::1"})
 }

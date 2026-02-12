@@ -5,8 +5,9 @@ import (
 	"log"
 	"time"
 
-	configs "github.com/codeid/hr-api/internal/configs"
-	"github.com/codeid/hr-api/internal/models"
+	"github.com/codeid/honda-leasing-api/internal/configs"
+	"github.com/codeid/honda-leasing-api/internal/model"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,8 +17,6 @@ type Database struct {
 	*gorm.DB
 }
 
-// InitDB initializes and returns Database instance (bukan set global).
-// Panggil ini di main(), lalu inject ke dependencies.
 func InitDB(cfg *configs.Config) (*Database, error) {
 	dsn := generateDSN(cfg.Database)
 
@@ -25,47 +24,41 @@ func InitDB(cfg *configs.Config) (*Database, error) {
 		cfg.Database.User,
 		cfg.Database.Host,
 		cfg.Database.Port,
-		cfg.Database.Name)
+		cfg.Database.Name,
+	)
 
-	// Configure GORM logger based on environment
 	gormConfig := &gorm.Config{}
+
 	if cfg.Environment == "development" {
 		gormConfig.Logger = logger.Default.LogMode(logger.Info)
 	} else {
 		gormConfig.Logger = logger.Default.LogMode(logger.Silent)
 	}
 
-	// Open connection
 	db, err := gorm.Open(postgres.Open(dsn), gormConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect database: %w", err)
 	}
-
-	// Configure connection pool
 	sqlDB, err := db.DB()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get database instance: %v", err)
+		return nil, fmt.Errorf("failed to get sql instance: %w", err)
 	}
 
 	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetMaxOpenConns(20)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	// Test connection
 	if err := sqlDB.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %v", err)
+		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
-
-	log.Printf("✅ Database connected successfully!")
-
-	// Return embedded struct
+	log.Println("Database connected successfully")
 	return &Database{DB: db}, nil
+
 }
 
-// generateDSN generates PostgreSQL connection string
 func generateDSN(dbConfig configs.DatabaseConfig) string {
 	return fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s search_path=hr",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		dbConfig.Host,
 		dbConfig.User,
 		dbConfig.Password,
@@ -76,114 +69,39 @@ func generateDSN(dbConfig configs.DatabaseConfig) string {
 	)
 }
 
-// GetDB returns the database instance
-func GetDB(db *Database) *gorm.DB {
-	if db.DB == nil {
-		log.Fatal("Database not initialized. Call InitDB first.")
-	}
-	return db.DB
-}
-
-// CloseDB sekarang ambil param Database (atau *gorm.DB jika embed tidak dipakai).
 func CloseDB(db *Database) error {
-	if db != nil {
-		sqlDB, err := db.DB.DB()
-		if err != nil {
-			return err
+	if db == nil || db.DB == nil {
+		return nil
+	}
+
+	sqlDB, err := db.DB.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDB.Close()
+}
+
+func InitAutoMigrate(database *Database) error {
+	schemas := []string{
+		"account",
+		"dealer",
+		"finance",
+		"leasing",
+		"mst",
+	}
+	for _, schema := range schemas {
+		if err := database.Exec(
+			fmt.Sprintf("CREATE SCHEMA IF NOT EXISTS %s", schema),
+		).Error; err != nil {
+			return fmt.Errorf("failed creating schema %s: %w", schema, err)
 		}
-		return sqlDB.Close()
 	}
+	if err := database.AutoMigrate(
+		&model.MotorType{},
+		&model.Motor{},
+	); err != nil {
+		return fmt.Errorf("auto migrate failed: %w", err)
+	}
+	log.Println("✅ Auto migration completed")
 	return nil
 }
-
-// AutoMigrate will execute given models
-func AutoMigrate(db *Database, models ...any) error {
-	if db == nil {
-		return fmt.Errorf("database not initialized")
-	}
-
-	log.Printf("Running auto migration for %d models...", len(models))
-
-	if err := db.AutoMigrate(models...); err != nil {
-		return fmt.Errorf("failed to auto migrate: %v", err)
-	}
-
-	log.Printf("✅ Auto migration completed successfully!")
-	return nil
-}
-
-func InitAutoMigrate(db *gorm.DB) {
-	db.Exec("CREATE SCHEMA IF NOT EXISTS hr")
-
-	/* 	err := db.AutoMigrate(
-	   		&models.Region{},
-	   	)
-	   	if err != nil {
-	   		log.Fatal("Failed to migrate database:", err)
-	   	} */
-
-	// 1. Migrate Region dulu
-	if err := db.AutoMigrate(&models.Region{}); err != nil {
-		log.Fatal("Error migrating Region:", err)
-	}
-
-	// 1. Baru Migrate Country
-	if err := db.AutoMigrate(&models.Country{}); err != nil {
-		log.Fatal("Error migrating Country:", err)
-	}
-}
-
-/*
-func SetupDB() (*gorm.DB, error) {
-	//1. set datasourcename db config
-	dsn := "host=localhost user=postgres password=admin dbname=hr_db_test port=5432 sslmode=disable TimeZone=Asia/Jakarta"
-
-	//2. open connection,aktifkan logger
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-
-	//2.1 tampilkan error jika connection fail to db
-	if err != nil {
-		log.Fatal("failed to connect to database : ", err)
-	}
-
-	//3. test create schema oe di db
-	//db.Exec("CREATE SCHEMA IF NOT EXISTS OE")
-
-	//3.1. create variable sqlDB agar bisa akses semua function di gorm.DB
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, err
-	}
-
-	//3.2. set connection pooling
-	// default db saat development openConn=100
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-
-	log.Println("Connected to database successfully")
-
-	//4. return value *gorm.DB
-	return db, nil
-}
-
-func InitAutoMigrate(db *gorm.DB) {
-	/* 	err := db.AutoMigrate(
-		&models.Region{}, //add model region
-	)
-
-	if err != nil {
-		log.Fatal("Failed to migrate database:", err)
-	}
-
-	// 1. Migrate Region dulu
-	if err := db.AutoMigrate(&models.Region{}); err != nil {
-		log.Fatal("Error migrating Region:", err)
-	}
-	if err := db.AutoMigrate(&models.Country{}); err != nil {
-		log.Fatal("Error migrating Country:", err)
-	}
-
-}*/
