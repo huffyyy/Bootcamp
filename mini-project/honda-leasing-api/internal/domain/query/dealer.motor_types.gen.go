@@ -17,7 +17,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/codeid/honda-leasing-api/cmd/internal/domain/models"
+	"github.com/codeid/honda-leasing-api/internal/domain/models"
 )
 
 func newMotorType(db *gorm.DB, opts ...gen.DOOption) motorType {

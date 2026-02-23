@@ -10,8 +10,17 @@ var (
 	ErrInvalidEmail      = errors.New("email already exist")
 	ErrInvalidPassword   = errors.New("invalid password")
 
-	//when create
 	ErrCreateUser = errors.New("error when create user")
 	ErrAssignRole = errors.New("error when assigned user role")
 	ErrTrxUser    = errors.New("transaction errors")
+
+	ErrMotorNotFound    = errors.New("motor not found")
+	ErrProductNotFound  = errors.New("product not found")
+	ErrCustomerNotFound = errors.New("customer not found")
+	ErrInvalidDP        = errors.New("invalid dp")
+	ErrInvalidTenor     = errors.New("invalid tenor")
+	ErrCreateContract   = errors.New("failed to create contract")
+
+	ErrContractNotFound = errors.New("contract not found")
+	ErrTaskNotFound     = errors.New("task not found")
 )

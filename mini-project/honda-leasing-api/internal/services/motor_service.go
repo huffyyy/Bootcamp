@@ -11,7 +11,7 @@ import (
 
 type MotorServiceInterface interface {
 	FindByID(ctx context.Context, id int64) (*dto.MotorDetailResponse, error)
-	GetAll(ctx context.Context) ([]dto.MotorListResponse, error)
+	FindAll(ctx context.Context) ([]dto.MotorListResponse, error)
 	SearchByName(ctx context.Context, name string) ([]dto.MotorListResponse, error)
 	FindByCategory(ctx context.Context, category string) ([]dto.MotorListResponse, error)
 }
@@ -62,8 +62,8 @@ func (s *motorService) FindByID(ctx context.Context, id int64) (*dto.MotorDetail
 
 }
 
-// GetAll implements [MotorServiceInterface].
-func (s *motorService) GetAll(ctx context.Context) ([]dto.MotorListResponse, error) {
+// FindAll implements [MotorServiceInterface].
+func (s *motorService) FindAll(ctx context.Context) ([]dto.MotorListResponse, error) {
 	mtrs, err := s.repo.FindAll(ctx)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (s *motorService) GetAll(ctx context.Context) ([]dto.MotorListResponse, err
 // SearchByName implements [MotorServiceInterface].
 func (s *motorService) SearchByName(ctx context.Context, name string) ([]dto.MotorListResponse, error) {
 	if name == "" {
-		return s.GetAll(ctx)
+		return s.FindAll(ctx)
 	}
 
 	mtrs, err := s.repo.SearchByName(ctx, name)

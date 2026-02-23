@@ -19,13 +19,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Find project root by looking for go.mod
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Navigate up to find go.mod
 	projectRoot := wd
 	for {
 		if _, err := os.Stat(filepath.Join(projectRoot, "go.mod")); err == nil {
@@ -38,11 +36,12 @@ func main() {
 		projectRoot = parent
 	}
 
-	outPath := filepath.Join(projectRoot, "internal", "domain")
+	queryPath := filepath.Join(projectRoot, "internal/domain/query")
+	modelPath := filepath.Join(projectRoot, "internal/domain/models")
 
 	g := gen.NewGenerator(gen.Config{
-		OutPath:           outPath,
-		ModelPkgPath:      "",
+		OutPath:           queryPath,
+		ModelPkgPath:      modelPath,
 		Mode:              gen.WithDefaultQuery | gen.WithQueryInterface,
 		FieldNullable:     true,
 		FieldWithIndexTag: true,
@@ -54,9 +53,27 @@ func main() {
 	motor := g.GenerateModelAs("dealer.motors", "Motor")
 	motorType := g.GenerateModelAs("dealer.motor_types", "MotorType")
 
+	customer := g.GenerateModelAs("dealer.customers", "Customer")
+
+	paymentSchedule := g.GenerateModelAs("finance.payment_schedule", "PaymentSchedule")
+
+	leasingProduct := g.GenerateModelAs("leasing.leasing_product", "LeasingProduct")
+	leasingContract := g.GenerateModelAs("leasing.leasing_contract", "LeasingContract")
+	leasingTask := g.GenerateModelAs("leasing.leasing_tasks", "LeasingTask")
+	leasingTaskAtr := g.GenerateModelAs("leasing.leasing_tasks_attributes", "LeasingTaskAtr")
+
 	g.ApplyBasic(
 		motor,
 		motorType,
+
+		customer,
+
+		paymentSchedule,
+
+		leasingProduct,
+		leasingContract,
+		leasingTask,
+		leasingTaskAtr,
 	)
 
 	g.Execute()

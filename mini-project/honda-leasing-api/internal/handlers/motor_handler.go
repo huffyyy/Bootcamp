@@ -38,7 +38,7 @@ func (h *MotorHandler) GetMotorByID(c *gin.Context) {
 
 // GetAllMotor handles GET /motors
 func (h *MotorHandler) GetAllMotor(c *gin.Context) {
-	resp, err := h.service.GetAll(c.Request.Context())
+	resp, err := h.service.FindAll(c.Request.Context())
 	if err != nil {
 		response.SendError(c, http.StatusBadRequest, "Failed to fetch Motor: "+err.Error())
 		return

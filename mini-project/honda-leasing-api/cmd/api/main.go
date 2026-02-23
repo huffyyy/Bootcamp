@@ -26,13 +26,6 @@ func main() {
 	}
 	defer database.CloseDB(db)
 
-	// OPTIONAL: AutoMigrate (only for dev)
-	/* 	if config.Environment == "development" {
-		if err := database.InitAutoMigrate(db); err != nil {
-			log.Fatalf("auto migrate failed: %v", err)
-		}
-	} */
-
 	if config.Environment == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
