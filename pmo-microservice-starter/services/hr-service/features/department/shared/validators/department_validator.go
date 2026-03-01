@@ -1,11 +1,12 @@
 package validators
 
 import (
-	"pmo/internal/pkg/response"
-	"pmo/services/hr-service/features/department/shared/dto"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+
+	"pmo/internal/pkg/response"
+	"pmo/services/hr-service/features/department/shared/dto"
 )
 
 type DepartmentValidator struct {

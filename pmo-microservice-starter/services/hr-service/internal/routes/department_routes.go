@@ -5,6 +5,7 @@ import (
 	getalldepartment "pmo/services/hr-service/features/department/get_all_department"
 	getdepartmentbyid "pmo/services/hr-service/features/department/get_department_by_id"
 	getdepartmentbyname "pmo/services/hr-service/features/department/get_department_by_name"
+	updatedepartment "pmo/services/hr-service/features/department/update_department"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -17,5 +18,6 @@ func RegisterDepartmentRoutes(router *gin.RouterGroup, db *gorm.DB, validate *va
 	getalldepartment.RegisterRoutes(router, db, validate)
 	getdepartmentbyid.RegisterRoutes(router, db, validate)
 	getdepartmentbyname.RegisterRoutes(router, db, validate)
+	updatedepartment.RegisterRoutes(router, db, validate)
 
 }
