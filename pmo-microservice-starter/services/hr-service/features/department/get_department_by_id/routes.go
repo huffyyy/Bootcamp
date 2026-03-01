@@ -1,4 +1,4 @@
-package createdepartment
+package getdepartmentbyid
 
 import (
 	"pmo/services/hr-service/features/department/shared/repository"
@@ -14,7 +14,7 @@ func RegisterRoutes(router *gin.RouterGroup, db *gorm.DB, v *validator.Validate)
 
 	deptValidator := validators.NewDepartmentValidator(v)
 
-	handler := NewCreateDepartmentHandler(repo, deptValidator)
+	handler := NewGetDepartmentByIDHandler(repo, deptValidator)
 
-	router.POST("/departments", handler.Handle)
+	router.GET("/departments/:id", handler.Handle)
 }

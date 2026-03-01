@@ -1,4 +1,4 @@
-package createdepartment
+package deletedapartment
 
 import (
 	"pmo/services/hr-service/features/department/shared/repository"
@@ -11,10 +11,7 @@ import (
 
 func RegisterRoutes(router *gin.RouterGroup, db *gorm.DB, v *validator.Validate) {
 	repo := repository.NewDepartmentRepository(db)
-
 	deptValidator := validators.NewDepartmentValidator(v)
-
-	handler := NewCreateDepartmentHandler(repo, deptValidator)
-
-	router.POST("/departments", handler.Handle)
+	handler := NewDeleteDepartmentHandler(repo, deptValidator)
+	router.DELETE("/departments/:id", handler.Handle)
 }

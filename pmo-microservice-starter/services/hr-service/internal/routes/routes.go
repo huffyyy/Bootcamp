@@ -11,23 +11,19 @@ import (
 
 // internal/routes/routes.go
 func SetupRoutes(db *gorm.DB, validate *validator.Validate) *gin.Engine {
-
 	router := gin.Default()
-
 	//global middleware
 	router.Use(middleware.Logger())
 	router.Use(middleware.ErrorHandler())
 	router.Use(middleware.CORS())
-
 	//set api group
 	basePath := viper.GetString("SERVER.BASE_PATH")
 	if basePath == "" {
 		basePath = "/api"
 	}
-
 	// Initialize storage versi hardcode
 	/* storage := storage.NewStorageService(
-	   "../../storage/uploads", // disimpan di root pmo-
+	   "../../storage/uploads", // disimpan di root pmo
 	   microservices/storage/uploads
 	   "/uploads", // Base URL for accessing files
 	   ) */
@@ -36,7 +32,6 @@ func SetupRoutes(db *gorm.DB, validate *validator.Validate) *gin.Engine {
 	// 	viper.GetString("STORAGE.STORAGE_PATH"), // Base path for file storage,
 	// 	viper.GetString("STORAGE.STORAGE_URL"),  // Base URL for accessing files
 	// )
-
 	// Serve static files, supaya bisa dical url photonya
 	//router.Static("/uploads", "../../storage/uploads") --versi hardcode
 	router.Static(viper.GetString("STORAGE.STORAGE_URL"),
@@ -45,10 +40,9 @@ func SetupRoutes(db *gorm.DB, validate *validator.Validate) *gin.Engine {
 	{
 		// Deparatments routes
 		RegisterDepartmentRoutes(api, db, validate)
-		// getalldepartment.RegisterEmployeeRoutes(api, db, validate, storage)
-
+		// Buka comment jika feature employee udah dicreate Employee routes
+		//RegisterEmployeeRoutes(api, db, validate, storage)
 	}
-
 	// Health check
 	router.GET("/hr/api/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{

@@ -11,7 +11,10 @@ import (
 
 func RegisterRoutes(router *gin.RouterGroup, db *gorm.DB, v *validator.Validate) {
 	repo := repository.NewDepartmentRepository(db)
+
 	deptValidator := validators.NewDepartmentValidator(v)
+
 	handler := NewGetAllDepartmentsHandler(repo, deptValidator)
+
 	router.GET("/departments", handler.Handle)
 }
