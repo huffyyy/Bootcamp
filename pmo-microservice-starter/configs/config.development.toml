@@ -1,5 +1,6 @@
 # config.development.toml
 ENVIRONMENT = "development"
+
 # Server Configuration
 [SERVER]
 ADDRESS = ":8081"
@@ -8,6 +9,7 @@ ADDRESS_USER = ":8085"
 BASE_PATH = "/hr/api"
 READ_TIMEOUT = 30
 WRITE_TIMEOUT = 30
+
 # Database Configuration
 [DATABASE]
 HOST = "localhost"
@@ -19,6 +21,7 @@ NAME = "hr_db_dev"
 MAX_OPEN_CONNS = 50
 MAX_IDLE_CONNS = 10
 CONN_MAX_LIFETIME = 300
+
 # JWT Configuration
 [JWT]
 SECRET = "my-secret"

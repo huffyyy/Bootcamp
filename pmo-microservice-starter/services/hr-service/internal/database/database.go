@@ -20,11 +20,12 @@ type Database struct {
 // Panggil ini di main(), lalu inject ke dependencies.
 func InitDB(cfg *configs.Config) (*Database, error) {
 	dsn := generateDSN(cfg.Database)
-	log.Printf("Connecting to database: %s@%s:%s/%s",
+	log.Printf("Connecting to database: %s@%s:%s/%s	",
 		cfg.Database.User,
 		cfg.Database.Host,
 		cfg.Database.Port,
 		cfg.Database.Name)
+
 	// Configure GORM logger based on environment
 	gormConfig := &gorm.Config{}
 	if cfg.Environment == "development" {
@@ -32,11 +33,13 @@ func InitDB(cfg *configs.Config) (*Database, error) {
 	} else {
 		gormConfig.Logger = logger.Default.LogMode(logger.Silent)
 	}
+
 	// Open connection
 	db, err := gorm.Open(postgres.Open(dsn), gormConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
+
 	// Configure connection pool
 	sqlDB, err := db.DB()
 	if err != nil {
@@ -57,7 +60,7 @@ func InitDB(cfg *configs.Config) (*Database, error) {
 
 // generateDSN generates PostgreSQL connection string
 func generateDSN(dbConfig configs.DatabaseConfig) string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s search_path=hr",
 		dbConfig.Host,
 		dbConfig.User,
 		dbConfig.Password,

@@ -15,9 +15,8 @@ type Config struct {
 	Server      ServerConfig   `mapstructure:"SERVER"`
 	Database    DatabaseConfig `mapstructure:"DATABASE"`
 	JWT         JWTConfig      `mapstructure:"JWT"`
-	//add in day04
-	Storage StorageConfig `mapstructure:"STORAGE"`
-	CORS    CORSConfig    `mapstructure:"CORS"`
+	Storage     StorageConfig  `mapstructure:"STORAGE"`
+	CORS        CORSConfig     `mapstructure:"CORS"`
 }
 type ServerConfig struct {
 	Address        string   `mapstructure:"ADDRESS_HR"`

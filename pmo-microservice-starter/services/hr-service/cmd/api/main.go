@@ -2,10 +2,13 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+	"pmo/internal/pkg/middleware/validator"
 	"pmo/services/hr-service/internal/configs"
 	"pmo/services/hr-service/internal/database"
+	"pmo/services/hr-service/internal/routes"
 	"syscall"
 
 	"github.com/gin-gonic/gin"
@@ -31,10 +34,10 @@ func main() {
 	defer database.CloseDB(db)
 
 	//5.Initialize validator (global/singleton)
-	//validate := validator.GetValidator()
+	validate := validator.GetValidator()
 
 	//6.Setup routes, up running gin web server
-	//router := routes.SetupRoutes(db.DB, validate)
+	router := routes.SetupRoutes(db.DB, validate)
 
 	//6.1.Start server
 
@@ -42,12 +45,12 @@ func main() {
 		config.Environment)
 
 	//6.2.goroutine baru
-	// go func() {
-	// 	if err := router.Run(config.Server.Address); err != nil && err !=
-	// 		http.ErrServerClosed {
-	// 		log.Fatalf("Failed to start server: %v", err)
-	// 	}
-	// }()
+	go func() {
+		if err := router.Run(config.Server.Address); err != nil && err !=
+			http.ErrServerClosed {
+			log.Fatalf("Failed to start server: %v", err)
+		}
+	}()
 
 	// 1. Graceful shutdown : nunggu operasi selesai baru shutdown server
 	// 2. Tanpa Graceful Shutdowon : close connection,
