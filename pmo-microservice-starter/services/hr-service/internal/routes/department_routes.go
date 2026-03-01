@@ -21,4 +21,5 @@ func RegisterDepartmentRoutes(router *gin.RouterGroup, db *gorm.DB, validate *va
 	getdepartmentbyname.RegisterRoutes(router, db, validate)
 	updatedepartment.RegisterRoutes(router, db, validate)
 	deletedapartment.RegisterRoutes(router, db, validate)
+
 }
