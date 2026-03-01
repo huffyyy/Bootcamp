@@ -45,8 +45,8 @@ func SetupRoutes(db *gorm.DB, validate *validator.Validate) *gin.Engine {
 	{
 		// Deparatments routes
 		RegisterDepartmentRoutes(api, db, validate)
-		// Buka comment jika feature employee udah dicreate Employee routes
-		// RegisterEmployeeRoutes(api, db, validate, storage)
+		// getalldepartment.RegisterEmployeeRoutes(api, db, validate, storage)
+
 	}
 
 	// Health check
